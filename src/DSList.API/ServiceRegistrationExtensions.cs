@@ -26,5 +26,10 @@ namespace DSList.API
             services.AddScoped<IGameRepository, GameReposiotry>();
             return services;
         }
+
+        public static IServiceCollection RegisterBusinessServices(this IServiceCollection services)
+        {
+            return services;
+        }
     }
 }
