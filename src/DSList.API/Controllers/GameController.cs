@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DSList.Service.Dtos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DSList.API.Controllers
 {
@@ -6,5 +7,10 @@ namespace DSList.API.Controllers
     [ApiController]
     public class GameController : ControllerBase
     {
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<GameMinDto>>> FindAll()
+        {
+            return Ok();
+        }
     }
 }
