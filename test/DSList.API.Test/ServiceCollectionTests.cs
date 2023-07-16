@@ -1,5 +1,7 @@
 ﻿using DSList.Data.Interfaces;
 using DSList.Data.Repositories;
+using DSList.Service.Interfaces;
+using DSList.Service.Services;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -45,6 +47,10 @@ namespace DSList.API.Test
             serviceCollection.RegisterBusinessServices();
 
             // Assert
+            var isRegisterd = serviceCollection.Any(
+                sd => sd.ServiceType == typeof(IGameService) &&
+                sd.ImplementationType == typeof(GameService));
+            isRegisterd.Should().BeTrue();
         }
     }
 }
