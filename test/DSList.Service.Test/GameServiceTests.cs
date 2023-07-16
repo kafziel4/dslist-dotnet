@@ -11,6 +11,7 @@ namespace DSList.Service.Test
             var service = new GameService();
 
             // Act
+            var result = await service.FindAllAsync();
 
             // Assert
         }
