@@ -17,10 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DSList.Data\DSList.Data.csproj" />
     <ProjectReference Include="..\DSList.Service\DSList.Service.csproj" />
   </ItemGroup>

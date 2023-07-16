@@ -1,4 +1,6 @@
-﻿namespace DSList.API.Test
+﻿using DSList.API.Controllers;
+
+namespace DSList.API.Test
 {
     public class GameControllerTests
     {
