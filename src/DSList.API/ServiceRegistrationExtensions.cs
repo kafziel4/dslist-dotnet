@@ -17,6 +17,11 @@ namespace DSList.API
                 services.AddDbContext<GameDbContext>(options =>
                     options.UseSqlite(configuration.GetConnectionString("GameDBConnectionString")));
             }
+            else
+            {
+                services.AddDbContext<GameDbContext>(options =>
+                    options.UseNpgsql(configuration.GetConnectionString("GameDBConnectionString")));
+            }
 
             services.AddScoped<IGameRepository, GameReposiotry>();
             return services;
