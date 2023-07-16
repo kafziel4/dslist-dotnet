@@ -33,5 +33,29 @@ namespace DSList.API.Test
             service.Should().BeOfType<GameReposiotry>();
 
         }
+
+        [Fact]
+        public void RegisterDataServices_EnvironmentIsProduction_ShouldRegisterGameDataServices()
+        {
+            // Arrange
+            var serviceCollection = new ServiceCollection();
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(
+                    new Dictionary<string, string> {
+                        {"ConnectionStrings:GameDBConnectionString", "AnyString"}})
+                .Build();
+            var mockEnvironment = new Mock<IWebHostEnvironment>();
+            mockEnvironment.Setup(_ => _.EnvironmentName).Returns("Production");
+
+            // Act
+            serviceCollection.RegisterDataServices(configuration, mockEnvironment.Object);
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            // Assert
+            var service = serviceProvider.GetService<IGameRepository>();
+            service.Should().NotBeNull();
+            service.Should().BeOfType<GameReposiotry>();
+
+        }
     }
 }
