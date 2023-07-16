@@ -1,6 +1,8 @@
 ﻿using DSList.Data.DbContexts;
 using DSList.Data.Interfaces;
 using DSList.Data.Repositories;
+using DSList.Service.Interfaces;
+using DSList.Service.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace DSList.API
@@ -29,6 +31,7 @@ namespace DSList.API
 
         public static IServiceCollection RegisterBusinessServices(this IServiceCollection services)
         {
+            services.AddScoped<IGameService, GameService>();
             return services;
         }
     }

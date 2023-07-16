@@ -15,7 +15,7 @@ namespace DSList.API.Test
         [Theory]
         [InlineData("Development")]
         [InlineData("Production")]
-        public void RegisterDataServices_Invoke_ShouldRegisterGameDataServices(string environment)
+        public void RegisterDataServices_Invoke_ShouldRegisterGameDataService(string environment)
         {
             // Arrange
             var serviceCollection = new ServiceCollection();
@@ -38,7 +38,7 @@ namespace DSList.API.Test
         }
 
         [Fact]
-        public void RegisterBusinessServices_Invoke_ShouldRegisterGameBusinessServices()
+        public void RegisterBusinessServices_Invoke_ShouldRegisterGameBusinessService()
         {
             // Arrange
             var serviceCollection = new ServiceCollection();
