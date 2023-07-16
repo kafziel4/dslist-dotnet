@@ -1,14 +1,25 @@
-﻿using DSList.Service.Dtos;
+﻿using AutoMapper;
+using DSList.Data.Interfaces;
+using DSList.Service.Dtos;
 using DSList.Service.Interfaces;
 
 namespace DSList.Service.Services
 {
     public class GameService : IGameService
     {
-        public Task<IEnumerable<GameMinDto>> FindAllAsync()
+        private readonly IGameRepository _repository;
+        private readonly IMapper _mapper;
+
+        public GameService(IGameRepository repository, IMapper mapper)
         {
-            IEnumerable<GameMinDto> list = new List<GameMinDto>();
-            return Task.FromResult(list);
+            _repository = repository;
+            _mapper = mapper;
+        }
+
+        public async Task<IEnumerable<GameMinDto>> FindAllAsync()
+        {
+            var result = await _repository.FindAllAsync();
+            return _mapper.Map<IEnumerable<GameMinDto>>(result);
         }
     }
 }
