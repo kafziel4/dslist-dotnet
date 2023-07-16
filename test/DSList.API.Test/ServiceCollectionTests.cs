@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DSList.Data.Interfaces;
+using DSList.Data.Repositories;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DSList.API.Test
 {
@@ -12,8 +15,13 @@ namespace DSList.API.Test
 
             // Act
             serviceCollection.RegisterDataServices();
+            var serviceProvider = serviceCollection.BuildServiceProvider();
 
             // Assert
+            var service = serviceProvider.GetService<IGameRepository>();
+            service.Should().NotBeNull();
+            service.Should().BeOfType<GameReposiotry>();
+
         }
     }
 }
