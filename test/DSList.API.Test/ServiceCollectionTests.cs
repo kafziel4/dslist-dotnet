@@ -33,7 +33,18 @@ namespace DSList.API.Test
             var service = serviceProvider.GetService<IGameRepository>();
             service.Should().NotBeNull();
             service.Should().BeOfType<GameReposiotry>();
+        }
 
+        [Fact]
+        public void RegisterBusinessServices_Invoke_ShouldRegisterGameBusinessServices()
+        {
+            // Arrange
+            var serviceCollection = new ServiceCollection();
+
+            // Act
+            serviceCollection.RegisterBusinessServices();
+
+            // Assert
         }
     }
 }
