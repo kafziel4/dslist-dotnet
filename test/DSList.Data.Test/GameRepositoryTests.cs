@@ -11,6 +11,7 @@ namespace DSList.Data.Test
             var repository = new GameReposiotry();
 
             // Act
+            var result = await repository.FindAllAsync();
 
             // Assert
         }
