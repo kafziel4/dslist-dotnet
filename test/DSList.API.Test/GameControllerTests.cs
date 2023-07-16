@@ -11,6 +11,7 @@ namespace DSList.API.Test
             var controller = new GameController();
 
             // Act
+            var result = await controller.FindAll();
 
             // Assert
         }
