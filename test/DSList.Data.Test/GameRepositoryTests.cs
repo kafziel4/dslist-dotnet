@@ -1,6 +1,9 @@
-﻿using DSList.Data.Entities;
+﻿using DSList.Data.DbContexts;
+using DSList.Data.Entities;
 using DSList.Data.Repositories;
 using FluentAssertions;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace DSList.Data.Test
 {
@@ -10,7 +13,14 @@ namespace DSList.Data.Test
         public async Task FindAllAsync_Invoke_ShouldReturnGameList()
         {
             // Arrange
-            var repository = new GameReposiotry();
+            var connection = new SqliteConnection("Data Source=:memory:");
+            connection.Open();
+
+            var optionsBuilder = new DbContextOptionsBuilder<GameDbContext>().UseSqlite(connection);
+            var context = new GameDbContext(optionsBuilder.Options);
+            context.Database.EnsureCreated();
+
+            var repository = new GameReposiotry(context);
 
             var expectedGame = new Game
             {
