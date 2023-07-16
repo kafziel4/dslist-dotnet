@@ -1,4 +1,6 @@
-﻿namespace DSList.Service.Test
+﻿using DSList.Service.Services;
+
+namespace DSList.Service.Test
 {
     public class GameServiceTests
     {
