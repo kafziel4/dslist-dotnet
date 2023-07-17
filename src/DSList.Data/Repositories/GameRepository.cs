@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DSList.Data.Repositories
 {
-    public class GameReposiotry : IGameRepository
+    public class GameRepository : IGameRepository
     {
         private readonly GameDbContext _context;
 
-        public GameReposiotry(GameDbContext context)
+        public GameRepository(GameDbContext context)
         {
             _context = context;
         }

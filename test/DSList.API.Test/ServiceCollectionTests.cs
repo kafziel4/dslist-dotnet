@@ -34,7 +34,7 @@ namespace DSList.API.Test
             // Assert
             var service = serviceProvider.GetService<IGameRepository>();
             service.Should().NotBeNull();
-            service.Should().BeOfType<GameReposiotry>();
+            service.Should().BeOfType<GameRepository>();
         }
 
         [Fact]

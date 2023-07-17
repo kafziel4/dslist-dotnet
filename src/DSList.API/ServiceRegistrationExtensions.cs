@@ -25,7 +25,7 @@ namespace DSList.API
                     options.UseNpgsql(configuration.GetConnectionString("GameDBConnectionString")));
             }
 
-            services.AddScoped<IGameRepository, GameReposiotry>();
+            services.AddScoped<IGameRepository, GameRepository>();
             return services;
         }
 
