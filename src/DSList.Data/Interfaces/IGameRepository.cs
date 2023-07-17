@@ -5,6 +5,6 @@ namespace DSList.Data.Interfaces
     public interface IGameRepository
     {
         Task<IEnumerable<Game>> FindAllAsync();
-        Task<Game> FindByIdAsync(long id);
+        Task<Game?> FindByIdAsync(long id);
     }
 }
