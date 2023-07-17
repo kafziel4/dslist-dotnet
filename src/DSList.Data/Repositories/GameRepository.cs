@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DSList.Data.Repositories
 {
-    public class GameReposiotry : IGameRepository
+    public class GameRepository : IGameRepository
     {
         private readonly GameDbContext _context;
 
-        public GameReposiotry(GameDbContext context)
+        public GameRepository(GameDbContext context)
         {
             _context = context;
         }
@@ -17,6 +17,11 @@ namespace DSList.Data.Repositories
         public async Task<IEnumerable<Game>> FindAllAsync()
         {
             return await _context.Games.ToListAsync();
+        }
+
+        public async Task<Game?> FindByIdAsync(long id)
+        {
+            return await _context.Games.FindAsync(id);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace DSList.Service.Profiles
         public GameProfile()
         {
             CreateMap<Game, GameMinDto>();
+            CreateMap<Game, GameDto>();
         }
     }
 }

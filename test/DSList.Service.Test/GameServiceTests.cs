@@ -11,6 +11,20 @@ namespace DSList.Service.Test
 {
     public class GameServiceTests
     {
+        private readonly GameService _service;
+        private readonly Mock<IGameRepository> _mockRepository;
+
+        public GameServiceTests()
+        {
+            _mockRepository = new Mock<IGameRepository>();
+
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+                cfg.AddProfile<GameProfile>());
+            var mapper = new Mapper(mapperConfiguration);
+
+            _service = new GameService(_mockRepository.Object, mapper);
+        }
+
         [Fact]
         public async Task FindAllAsync_Invoke_ShouldReturnGameMinDtoList()
         {
@@ -29,19 +43,12 @@ namespace DSList.Service.Test
                     ImgUrl = "https://raw.githubusercontent.com/devsuperior/java-spring-dslist/main/resources/1.png",
                     ShortDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse officiis corrupti unde repellat non quibusdam! Id nihil itaque ipsum!",
                     LongDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus dolorum illum placeat eligendi, quis maiores veniam. " +
-                "Incidunt dolorum, nisi deleniti dicta odit voluptatem nam provident temporibus reprehenderit blanditiis consectetur tenetur. " +
-                "Dignissimos blanditiis quod corporis iste, aliquid perspiciatis architecto quasi tempore ipsam voluptates ea ad distinctio, sapiente qui, amet quidem culpa."
+                        "Incidunt dolorum, nisi deleniti dicta odit voluptatem nam provident temporibus reprehenderit blanditiis consectetur tenetur. " +
+                        "Dignissimos blanditiis quod corporis iste, aliquid perspiciatis architecto quasi tempore ipsam voluptates ea ad distinctio, sapiente qui, amet quidem culpa."
                 });
             }
+            _mockRepository.Setup(_ => _.FindAllAsync()).ReturnsAsync(gameList);
 
-            var repositoryMock = new Mock<IGameRepository>();
-            repositoryMock.Setup(_ => _.FindAllAsync()).ReturnsAsync(gameList);
-
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-                cfg.AddProfile<GameProfile>());
-            var mapper = new Mapper(mapperConfiguration);
-
-            var service = new GameService(repositoryMock.Object, mapper);
             var expectedFirstGame = new GameMinDto
             {
                 Id = 1,
@@ -52,11 +59,53 @@ namespace DSList.Service.Test
             };
 
             // Act
-            var result = await service.FindAllAsync();
+            var result = await _service.FindAllAsync();
 
             // Assert
             result.Should().HaveCount(10);
             result.First().Should().BeEquivalentTo(expectedFirstGame, options => options.ComparingByMembers<GameMinDto>());
+        }
+
+        [Fact]
+        public async Task FindByIdAsync_Invoke_ShouldReturnGameDto()
+        {
+            // Arrange
+            var game = new Game
+            {
+                Id = 1,
+                Title = "Mass Effect Trilogy",
+                Score = 4.8,
+                Year = 2012,
+                Genre = "Role-playing (RPG), Shooter",
+                Platforms = "XBox, Playstation, PC",
+                ImgUrl = "https://raw.githubusercontent.com/devsuperior/java-spring-dslist/main/resources/1.png",
+                ShortDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse officiis corrupti unde repellat non quibusdam! Id nihil itaque ipsum!",
+                LongDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus dolorum illum placeat eligendi, quis maiores veniam. " +
+                    "Incidunt dolorum, nisi deleniti dicta odit voluptatem nam provident temporibus reprehenderit blanditiis consectetur tenetur. " +
+                    "Dignissimos blanditiis quod corporis iste, aliquid perspiciatis architecto quasi tempore ipsam voluptates ea ad distinctio, sapiente qui, amet quidem culpa."
+            };
+            _mockRepository.Setup(_ => _.FindByIdAsync(1)).ReturnsAsync(game);
+
+            var expectedGame = new GameDto
+            {
+                Id = 1,
+                Title = "Mass Effect Trilogy",
+                Score = 4.8,
+                Year = 2012,
+                Genre = "Role-playing (RPG), Shooter",
+                Platforms = "XBox, Playstation, PC",
+                ImgUrl = "https://raw.githubusercontent.com/devsuperior/java-spring-dslist/main/resources/1.png",
+                ShortDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse officiis corrupti unde repellat non quibusdam! Id nihil itaque ipsum!",
+                LongDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus dolorum illum placeat eligendi, quis maiores veniam. " +
+                    "Incidunt dolorum, nisi deleniti dicta odit voluptatem nam provident temporibus reprehenderit blanditiis consectetur tenetur. " +
+                    "Dignissimos blanditiis quod corporis iste, aliquid perspiciatis architecto quasi tempore ipsam voluptates ea ad distinctio, sapiente qui, amet quidem culpa."
+            };
+
+            // Act
+            var result = await _service.FindByIdAsync(1);
+
+            // Assert
+            result.Should().BeEquivalentTo(expectedGame, options => options.ComparingByMembers<GameDto>());
         }
     }
 }
