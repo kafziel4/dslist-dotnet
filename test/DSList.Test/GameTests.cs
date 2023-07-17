@@ -60,6 +60,36 @@ namespace DSList.Test
             gamesList.First().Should().BeEquivalentTo(expectedFirstGame, options => options.ComparingByMembers<GameMinDto>());
         }
 
+        [Fact]
+        public async Task GetGameByIdEndpoint_WhenRequested_ShouldReturnOKAndGame()
+        {
+            // Arrange
+            var client = CreateClient();
+            var expectedGame = new GameDto
+            {
+                Id = 1,
+                Title = "Mass Effect Trilogy",
+                Score = 4.8,
+                Year = 2012,
+                Genre = "Role-playing (RPG), Shooter",
+                Platforms = "XBox, Playstation, PC",
+                ImgUrl = "https://raw.githubusercontent.com/devsuperior/java-spring-dslist/main/resources/1.png",
+                ShortDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse officiis corrupti unde repellat non quibusdam! Id nihil itaque ipsum!",
+                LongDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus dolorum illum placeat eligendi, quis maiores veniam. " +
+                    "Incidunt dolorum, nisi deleniti dicta odit voluptatem nam provident temporibus reprehenderit blanditiis consectetur tenetur. " +
+                    "Dignissimos blanditiis quod corporis iste, aliquid perspiciatis architecto quasi tempore ipsam voluptates ea ad distinctio, sapiente qui, amet quidem culpa."
+            };
+
+            // Act
+            var response = await client.GetAsync("/api/games/1");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var responseObject = await response.Content.ReadFromJsonAsync<GameDto>();
+            var game = responseObject.Should().BeAssignableTo<GameDto>().Subject;
+            game.Should().BeEquivalentTo(expectedGame, options => options.ComparingByMembers<GameDto>());
+        }
+
         public async Task InitializeAsync()
         {
             await _postgreSqlContainer.StartAsync();
