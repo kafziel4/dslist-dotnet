@@ -5,5 +5,6 @@ namespace DSList.Service.Interfaces
     public interface IGameService
     {
         Task<IEnumerable<GameMinDto>> FindAllAsync();
+        Task<GameDto> FindByIdAsync(long id);
     }
 }
