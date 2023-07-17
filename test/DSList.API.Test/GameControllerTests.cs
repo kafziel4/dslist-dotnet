@@ -9,6 +9,15 @@ namespace DSList.API.Test
 {
     public class GameControllerTests
     {
+        private readonly Mock<IGameService> _mockService;
+        private readonly GameController _controller;
+
+        public GameControllerTests()
+        {
+            _mockService = new Mock<IGameService>();
+            _controller = new GameController(_mockService.Object);
+        }
+
         [Fact]
         public async Task FindAll_GetAction_ShouldReturnStatusOkAndGameMinDtoList()
         {
@@ -25,28 +34,18 @@ namespace DSList.API.Test
                     ShortDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse officiis corrupti unde repellat non quibusdam! Id nihil itaque ipsum!"
                 });
             }
-            var gameServiceMock = new Mock<IGameService>();
-            gameServiceMock.Setup(_ => _.FindAllAsync()).ReturnsAsync(gameList);
 
-            var controller = new GameController(gameServiceMock.Object);
-            var expectedFirstGame = new GameMinDto
-            {
-                Id = 1,
-                Title = "Mass Effect Trilogy",
-                Year = 2012,
-                ImgUrl = "https://raw.githubusercontent.com/devsuperior/java-spring-dslist/main/resources/1.png",
-                ShortDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse officiis corrupti unde repellat non quibusdam! Id nihil itaque ipsum!"
-            };
+            _mockService.Setup(_ => _.FindAllAsync()).ReturnsAsync(gameList);
 
             // Act
-            var result = await controller.FindAll();
+            var result = await _controller.FindAll();
 
             // Assert
             var actionResult = result.Should().BeOfType<ActionResult<IEnumerable<GameMinDto>>>().Subject;
             var okObjectResult = actionResult.Result.Should().BeOfType<OkObjectResult>().Subject;
             var dtos = okObjectResult.Value.Should().BeAssignableTo<IEnumerable<GameMinDto>>().Subject;
             dtos.Should().HaveCount(10);
-            dtos.First().Should().BeEquivalentTo(expectedFirstGame, options => options.ComparingByMembers<GameMinDto>());
+            dtos.First().Should().BeEquivalentTo(gameList[0], options => options.ComparingByMembers<GameMinDto>());
         }
 
         [Fact]
@@ -68,33 +67,16 @@ namespace DSList.API.Test
                     "Dignissimos blanditiis quod corporis iste, aliquid perspiciatis architecto quasi tempore ipsam voluptates ea ad distinctio, sapiente qui, amet quidem culpa."
             };
 
-            var gameServiceMock = new Mock<IGameService>();
-            gameServiceMock.Setup(_ => _.FindByIdAsync(1)).ReturnsAsync(game);
-
-            var controller = new GameController(gameServiceMock.Object);
-            var expectedFirstGame = new GameDto
-            {
-                Id = 1,
-                Title = "Mass Effect Trilogy",
-                Score = 4.8,
-                Year = 2012,
-                Genre = "Role-playing (RPG), Shooter",
-                Platforms = "XBox, Playstation, PC",
-                ImgUrl = "https://raw.githubusercontent.com/devsuperior/java-spring-dslist/main/resources/1.png",
-                ShortDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse officiis corrupti unde repellat non quibusdam! Id nihil itaque ipsum!",
-                LongDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus dolorum illum placeat eligendi, quis maiores veniam. " +
-                    "Incidunt dolorum, nisi deleniti dicta odit voluptatem nam provident temporibus reprehenderit blanditiis consectetur tenetur. " +
-                    "Dignissimos blanditiis quod corporis iste, aliquid perspiciatis architecto quasi tempore ipsam voluptates ea ad distinctio, sapiente qui, amet quidem culpa."
-            };
+            _mockService.Setup(_ => _.FindByIdAsync(1)).ReturnsAsync(game);
 
             // Act
-            var result = await controller.FindById(1);
+            var result = await _controller.FindById(1);
 
             // Assert
             var actionResult = result.Should().BeOfType<ActionResult<GameDto>>().Subject;
             var okObjectResult = actionResult.Result.Should().BeOfType<OkObjectResult>().Subject;
             var dto = okObjectResult.Value.Should().BeAssignableTo<GameDto>().Subject;
-            dto.Should().BeEquivalentTo(expectedFirstGame, options => options.ComparingByMembers<GameMinDto>());
+            dto.Should().BeEquivalentTo(game, options => options.ComparingByMembers<GameMinDto>());
         }
     }
 }
