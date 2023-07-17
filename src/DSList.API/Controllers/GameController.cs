@@ -21,5 +21,12 @@ namespace DSList.API.Controllers
             var games = await _gameService.FindAllAsync();
             return Ok(games);
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GameDto>> FindById(long id)
+        {
+            var game = await _gameService.FindByIdAsync(id);
+            return Ok(game);
+        }
     }
 }
