@@ -16,6 +16,7 @@ namespace DSList.Test
     public class GameTests : WebApplicationFactory<Program>, IAsyncLifetime
     {
         private readonly PostgreSqlContainer _postgreSqlContainer = new PostgreSqlBuilder().Build();
+        private HttpClient _client = null!;
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -39,7 +40,6 @@ namespace DSList.Test
         public async Task GetAllGamesEndpoint_WhenRequested_ShouldReturnOKAndGamesList()
         {
             // Arrange
-            var client = CreateClient();
             var expectedFirstGame = new GameMinDto
             {
                 Id = 1,
@@ -50,7 +50,7 @@ namespace DSList.Test
             };
 
             // Act
-            var response = await client.GetAsync("/api/games");
+            var response = await _client.GetAsync("/api/games");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -64,7 +64,6 @@ namespace DSList.Test
         public async Task GetGameByIdEndpoint_WhenRequested_ShouldReturnOKAndGame()
         {
             // Arrange
-            var client = CreateClient();
             var expectedGame = new GameDto
             {
                 Id = 1,
@@ -81,7 +80,7 @@ namespace DSList.Test
             };
 
             // Act
-            var response = await client.GetAsync("/api/games/1");
+            var response = await _client.GetAsync("/api/games/1");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -93,6 +92,7 @@ namespace DSList.Test
         public async Task InitializeAsync()
         {
             await _postgreSqlContainer.StartAsync();
+            _client = CreateClient();
         }
 
         public new async Task DisposeAsync()
