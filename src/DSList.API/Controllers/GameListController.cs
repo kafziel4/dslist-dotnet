@@ -18,7 +18,8 @@ namespace DSList.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GameListDto>>> FindAll()
         {
-            return Ok();
+            var gameLists = await _gameListService.FindAllAsync();
+            return Ok(gameLists);
         }
     }
 }
