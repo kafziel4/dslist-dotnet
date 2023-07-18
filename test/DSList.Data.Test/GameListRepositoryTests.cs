@@ -1,5 +1,6 @@
 ﻿using DSList.Data.DbContexts;
 using DSList.Data.Entities;
+using DSList.Data.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
