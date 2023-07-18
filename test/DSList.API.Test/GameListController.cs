@@ -1,4 +1,5 @@
-﻿using DSList.Service.DTOs;
+﻿using DSList.API.Controllers;
+using DSList.Service.DTOs;
 using DSList.Service.Interfaces;
 using Moq;
 
