@@ -35,6 +35,7 @@ namespace DSList.API
         public static IServiceCollection RegisterBusinessServices(this IServiceCollection services)
         {
             services.AddScoped<IGameService, GameService>();
+            services.AddScoped<IGameListService, GameListService>();
             return services;
         }
     }
