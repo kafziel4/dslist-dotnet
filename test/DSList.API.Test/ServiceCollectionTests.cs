@@ -38,7 +38,7 @@ namespace DSList.API.Test
         }
 
         [Fact]
-        public void RegisterBusinessServices_Invoke_ShouldRegisterGameBusinessService()
+        public void RegisterBusinessServices_Invoke_ShouldRegisterGameService()
         {
             // Arrange
             var serviceCollection = new ServiceCollection();
@@ -76,6 +76,22 @@ namespace DSList.API.Test
             var service = serviceProvider.GetService<IGameListRepository>();
             service.Should().NotBeNull();
             service.Should().BeOfType<GameListRepository>();
+        }
+
+        [Fact]
+        public void RegisterBusinessServices_Invoke_ShouldRegisterGameListService()
+        {
+            // Arrange
+            var serviceCollection = new ServiceCollection();
+
+            // Act
+            serviceCollection.RegisterBusinessServices();
+
+            // Assert
+            var isRegisterd = serviceCollection.Any(
+                sd => sd.ServiceType == typeof(IGameListService) &&
+                sd.ImplementationType == typeof(GameListService));
+            isRegisterd.Should().BeTrue();
         }
     }
 }
