@@ -183,6 +183,34 @@ namespace SqliteMigrations.Migrations
                             Year = 1993
                         });
                 });
+
+            modelBuilder.Entity("DSList.Data.Entities.GameList", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GameLists");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Name = "Aventura e RPG"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Name = "Jogos de plataforma"
+                        });
+                });
 #pragma warning restore 612, 618
         }
     }
