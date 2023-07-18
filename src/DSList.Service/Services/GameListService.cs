@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DSList.Data.Interfaces;
+using DSList.Service.DTOs;
 using DSList.Service.Interfaces;
 
 namespace DSList.Service.Services
@@ -13,6 +14,11 @@ namespace DSList.Service.Services
         {
             _repository = repository;
             _mapper = mapper;
+        }
+
+        public async Task<IEnumerable<GameListDto>> FindAllAsync()
+        {
+            return new List<GameListDto>();
         }
     }
 }
