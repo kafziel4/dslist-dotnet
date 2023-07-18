@@ -28,6 +28,7 @@ namespace DSList.Data.Test
             };
 
             // Act
+            var result = repository.FindAllAsync();
 
             // Assert
         }
