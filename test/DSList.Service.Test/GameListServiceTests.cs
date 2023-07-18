@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DSList.Data.Entities;
 using DSList.Data.Interfaces;
+using DSList.Service.Profiles;
 using DSList.Service.Services;
 using Moq;
 
@@ -18,6 +19,8 @@ namespace DSList.Service.Test
                 cfg.AddProfile<GameListProfile>());
             var mapper = new Mapper(mapperConfiguration);
 
+            var service = new GameListService(mockRepository.Object, mapper);
+
             var listOfGameList = new List<GameList>();
             for (int i = 1; i <= 2; i++)
             {
@@ -29,9 +32,8 @@ namespace DSList.Service.Test
             }
             mockRepository.Setup(_ => _.FindAllAsync()).ReturnsAsync(listOfGameList);
 
-            var service = new GameListService(mockRepository.Object, mapper);
-
             // Act          
+            var result = service.FindAllAsync();
 
             // Assert
         }
