@@ -18,7 +18,8 @@ namespace DSList.Service.Services
 
         public async Task<IEnumerable<GameListDto>> FindAllAsync()
         {
-            return new List<GameListDto>();
+            var result = await _repository.FindAllAsync();
+            return _mapper.Map<IEnumerable<GameListDto>>(result);
         }
     }
 }
