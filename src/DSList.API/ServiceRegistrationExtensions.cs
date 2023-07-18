@@ -28,6 +28,7 @@ namespace DSList.API
             }
 
             services.AddScoped<IGameRepository, GameRepository>();
+            services.AddScoped<IGameListRepository, GameListRepository>();
             return services;
         }
 
