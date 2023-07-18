@@ -1,6 +1,8 @@
 ﻿using DSList.API.Controllers;
 using DSList.Service.DTOs;
 using DSList.Service.Interfaces;
+using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 
 namespace DSList.API.Test
@@ -30,6 +32,11 @@ namespace DSList.API.Test
             var result = await controller.FindAll();
 
             // Assert
+            var actionResult = result.Should().BeOfType<ActionResult<IEnumerable<GameListDto>>>().Subject;
+            var okObjectResult = actionResult.Result.Should().BeOfType<OkObjectResult>().Subject;
+            var dtos = okObjectResult.Value.Should().BeAssignableTo<IEnumerable<GameListDto>>().Subject;
+            dtos.Should().HaveCount(2);
+            dtos.First().Should().BeEquivalentTo(listOfGameList[0], options => options.ComparingByMembers<GameListDto>());
         }
     }
 }
