@@ -1,6 +1,7 @@
 ﻿using DSList.Data.DbContexts;
 using DSList.Data.Entities;
 using DSList.Data.Repositories;
+using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,9 +29,11 @@ namespace DSList.Data.Test
             };
 
             // Act
-            var result = repository.FindAllAsync();
+            var result = await repository.FindAllAsync();
 
             // Assert
+            result.Should().HaveCount(2);
+            result.First().Should().BeEquivalentTo(expectedGameList, options => options.ComparingByMembers<GameList>());
         }
     }
 }
