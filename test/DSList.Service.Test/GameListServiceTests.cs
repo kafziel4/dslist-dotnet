@@ -1,5 +1,6 @@
 ﻿using DSList.Data.Entities;
 using DSList.Data.Interfaces;
+using DSList.Service.Services;
 using Moq;
 
 namespace DSList.Service.Test
