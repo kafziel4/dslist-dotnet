@@ -1,6 +1,7 @@
 ﻿using DSList.Data.DbContexts;
 using DSList.Data.Entities;
 using DSList.Data.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace DSList.Data.Repositories
 {
@@ -15,7 +16,7 @@ namespace DSList.Data.Repositories
 
         public async Task<IEnumerable<GameList>> FindAllAsync()
         {
-            return new List<GameList>();
+            return await _context.GameLists.ToListAsync();
         }
     }
 }
