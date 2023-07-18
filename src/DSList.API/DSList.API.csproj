@@ -20,6 +20,8 @@
   <ItemGroup>
     <ProjectReference Include="..\DSList.Data\DSList.Data.csproj" />
     <ProjectReference Include="..\DSList.Service\DSList.Service.csproj" />
+    <ProjectReference Include="..\PostgresMigrations\PostgresMigrations.csproj" />
+    <ProjectReference Include="..\SqliteMigrations\SqliteMigrations.csproj" />
   </ItemGroup>
 
 </Project>

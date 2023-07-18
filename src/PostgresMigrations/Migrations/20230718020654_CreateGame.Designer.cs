@@ -8,10 +8,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace DSList.Data.Migrations
+namespace PostgresMigrations.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    [Migration("20230716154318_CreateGame")]
+    [Migration("20230718020654_CreateGame")]
     partial class CreateGame
     {
         /// <inheritdoc />
