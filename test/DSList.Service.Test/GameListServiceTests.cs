@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using DSList.Data.Entities;
 using DSList.Data.Interfaces;
+using DSList.Service.DTOs;
 using DSList.Service.Profiles;
 using DSList.Service.Services;
+using FluentAssertions;
 using Moq;
 
 namespace DSList.Service.Test
@@ -32,10 +34,18 @@ namespace DSList.Service.Test
             }
             mockRepository.Setup(_ => _.FindAllAsync()).ReturnsAsync(listOfGameList);
 
+            var expectedFirstGameList = new GameListDto
+            {
+                Id = 1,
+                Name = "Aventura e RPG"
+            };
+
             // Act          
-            var result = service.FindAllAsync();
+            var result = await service.FindAllAsync();
 
             // Assert
+            result.Should().HaveCount(2);
+            result.First().Should().BeEquivalentTo(expectedFirstGameList, options => options.ComparingByMembers<GameListDto>());
         }
     }
 }
