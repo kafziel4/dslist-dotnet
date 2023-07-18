@@ -15,7 +15,7 @@ namespace DSList.API.Test
         [Theory]
         [InlineData("Development")]
         [InlineData("Production")]
-        public void RegisterDataServices_Invoke_ShouldRegisterGameDataService(string environment)
+        public void RegisterDataServices_Invoke_ShouldRegisterGameRepository(string environment)
         {
             // Arrange
             var serviceCollection = new ServiceCollection();
@@ -38,7 +38,7 @@ namespace DSList.API.Test
         }
 
         [Fact]
-        public void RegisterBusinessServices_Invoke_ShouldRegisterGameBusinessService()
+        public void RegisterBusinessServices_Invoke_ShouldRegisterGameService()
         {
             // Arrange
             var serviceCollection = new ServiceCollection();
@@ -50,6 +50,47 @@ namespace DSList.API.Test
             var isRegisterd = serviceCollection.Any(
                 sd => sd.ServiceType == typeof(IGameService) &&
                 sd.ImplementationType == typeof(GameService));
+            isRegisterd.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData("Development")]
+        [InlineData("Production")]
+        public void RegisterDataServices_Invoke_ShouldRegisterGameListRepository(string environment)
+        {
+            // Arrange
+            var serviceCollection = new ServiceCollection();
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(
+                    new Dictionary<string, string> {
+                        {"ConnectionStrings:GameDBConnectionString", "AnyString"}})
+                .Build();
+            var mockEnvironment = new Mock<IWebHostEnvironment>();
+            mockEnvironment.Setup(_ => _.EnvironmentName).Returns(environment);
+
+            // Act
+            serviceCollection.RegisterDataServices(configuration, mockEnvironment.Object);
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            // Assert
+            var service = serviceProvider.GetService<IGameListRepository>();
+            service.Should().NotBeNull();
+            service.Should().BeOfType<GameListRepository>();
+        }
+
+        [Fact]
+        public void RegisterBusinessServices_Invoke_ShouldRegisterGameListService()
+        {
+            // Arrange
+            var serviceCollection = new ServiceCollection();
+
+            // Act
+            serviceCollection.RegisterBusinessServices();
+
+            // Assert
+            var isRegisterd = serviceCollection.Any(
+                sd => sd.ServiceType == typeof(IGameListService) &&
+                sd.ImplementationType == typeof(GameListService));
             isRegisterd.Should().BeTrue();
         }
     }

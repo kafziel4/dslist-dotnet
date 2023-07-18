@@ -1,5 +1,6 @@
 ﻿using DSList.Data.DbContexts;
 using DSList.Service.Dtos;
+using DSList.Service.DTOs;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -13,7 +14,7 @@ using Testcontainers.PostgreSql;
 
 namespace DSList.Test
 {
-    public class GameTests : WebApplicationFactory<Program>, IAsyncLifetime
+    public class IntegrationTests : WebApplicationFactory<Program>, IAsyncLifetime
     {
         private readonly PostgreSqlContainer _postgreSqlContainer = new PostgreSqlBuilder().Build();
         private HttpClient _client = null!;
@@ -87,6 +88,27 @@ namespace DSList.Test
             var responseObject = await response.Content.ReadFromJsonAsync<GameDto>();
             var game = responseObject.Should().BeAssignableTo<GameDto>().Subject;
             game.Should().BeEquivalentTo(expectedGame, options => options.ComparingByMembers<GameDto>());
+        }
+
+        [Fact]
+        public async Task GetAllGameListsEndpoint_WhenRequested_ShouldReturnOKAndListOfGamesList()
+        {
+            // Arrange
+            var expectedFirstGameList = new GameListDto
+            {
+                Id = 1,
+                Name = "Aventura e RPG"
+            };
+
+            // Act
+            var response = await _client.GetAsync("/api/lists");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var responseObject = await response.Content.ReadFromJsonAsync<IEnumerable<GameListDto>>();
+            var gameLists = responseObject.Should().BeAssignableTo<IEnumerable<GameListDto>>().Subject;
+            gameLists.Should().HaveCount(2);
+            gameLists.First().Should().BeEquivalentTo(expectedFirstGameList, options => options.ComparingByMembers<GameListDto>());
         }
 
         public async Task InitializeAsync()

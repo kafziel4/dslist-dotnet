@@ -7,6 +7,7 @@ namespace DSList.Data.DbContexts
     public class GameDbContext : DbContext
     {
         public DbSet<Game> Games { get; set; }
+        public DbSet<GameList> GameLists { get; set; }
 
         public GameDbContext(DbContextOptions<GameDbContext> options) : base(options)
         {
@@ -15,6 +16,7 @@ namespace DSList.Data.DbContexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new GameConfiguration());
+            modelBuilder.ApplyConfiguration(new GameListConfiguration());
             base.OnModelCreating(modelBuilder);
         }
     }

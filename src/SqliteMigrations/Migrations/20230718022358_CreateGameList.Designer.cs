@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DSList.Data.Migrations
+namespace SqliteMigrations.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    [Migration("20230716154923_CreateGameDev")]
-    partial class CreateGameDev
+    [Migration("20230718022358_CreateGameList")]
+    partial class CreateGameList
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -184,6 +184,34 @@ namespace DSList.Data.Migrations
                             ShortDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse officiis corrupti unde repellat non quibusdam! Id nihil itaque ipsum!",
                             Title = "Sonic CD",
                             Year = 1993
+                        });
+                });
+
+            modelBuilder.Entity("DSList.Data.Entities.GameList", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GameLists");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Name = "Aventura e RPG"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Name = "Jogos de plataforma"
                         });
                 });
 #pragma warning restore 612, 618
