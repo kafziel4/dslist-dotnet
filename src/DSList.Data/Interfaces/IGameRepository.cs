@@ -1,4 +1,5 @@
 ﻿using DSList.Data.Entities;
+using DSList.Data.Projections;
 
 namespace DSList.Data.Interfaces
 {
@@ -6,5 +7,6 @@ namespace DSList.Data.Interfaces
     {
         Task<IEnumerable<Game>> FindAllAsync();
         Task<Game?> FindByIdAsync(long id);
+        Task<IEnumerable<GameMinProjection>> SearchByListAsync(long id);
     }
 }
