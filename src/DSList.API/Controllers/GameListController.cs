@@ -10,12 +10,12 @@ namespace DSList.API.Controllers
     public class GameListController : ControllerBase
     {
         private readonly IGameListService _gameListService;
-        private readonly IGameService gameService;
+        private readonly IGameService _gameService;
 
         public GameListController(IGameListService gameListService, IGameService gameService)
         {
             _gameListService = gameListService;
-            this.gameService = gameService;
+            _gameService = gameService;
         }
 
         [HttpGet]
@@ -28,7 +28,8 @@ namespace DSList.API.Controllers
         [HttpGet("{id}/games")]
         public async Task<ActionResult<IEnumerable<GameMinDto>>> FindByList(long id)
         {
-            return Ok();
+            var gameList = await _gameService.FindByListAsync(id);
+            return Ok(gameList);
         }
     }
 }
