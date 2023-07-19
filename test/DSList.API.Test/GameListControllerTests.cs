@@ -14,6 +14,7 @@ namespace DSList.API.Test
         public async Task FindAll_GetAction_ShouldReturnStatusOkAndListOfGameListDto()
         {
             // Arrange
+            var mockGameService = new Mock<IGameService>();
             var mockService = new Mock<IGameListService>();
 
             var listOfGameList = new List<GameListDto>();
@@ -27,7 +28,7 @@ namespace DSList.API.Test
             }
             mockService.Setup(_ => _.FindAllAsync()).ReturnsAsync(listOfGameList);
 
-            var controller = new GameListController(mockService.Object);
+            var controller = new GameListController(mockService.Object, mockGameService.Object);
 
             // Act
             var result = await controller.FindAll();

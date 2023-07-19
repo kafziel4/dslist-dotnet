@@ -9,10 +9,12 @@ namespace DSList.API.Controllers
     public class GameListController : ControllerBase
     {
         private readonly IGameListService _gameListService;
+        private readonly IGameService gameService;
 
-        public GameListController(IGameListService gameListService)
+        public GameListController(IGameListService gameListService, IGameService gameService)
         {
             _gameListService = gameListService;
+            this.gameService = gameService;
         }
 
         [HttpGet]
