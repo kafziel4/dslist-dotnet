@@ -27,7 +27,18 @@ namespace DSList.Data.Repositories
 
         public async Task<IEnumerable<GameMinProjection>> SearchByListAsync(long id)
         {
-            return new List<GameMinProjection>();
+            return await _context.Belongings
+                .Where(b => b.GameListId == id)
+                .Select(b => new GameMinProjection
+                {
+                    Id = b.GameId,
+                    Title = b.Game.Title,
+                    Year = b.Game.Year,
+                    ImgUrl = b.Game.ImgUrl,
+                    ShortDescription = b.Game.ShortDescription,
+                    Position = b.Position
+                })
+                .ToListAsync();
         }
     }
 }
