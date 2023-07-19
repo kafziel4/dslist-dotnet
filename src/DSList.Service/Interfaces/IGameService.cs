@@ -6,6 +6,6 @@ namespace DSList.Service.Interfaces
     {
         Task<IEnumerable<GameMinDto>> FindAllAsync();
         Task<GameDto> FindByIdAsync(long id);
-        Task<IEnumerable<GameMinDto>> FindByList(long id);
+        Task<IEnumerable<GameMinDto>> FindByListAsync(long id);
     }
 }

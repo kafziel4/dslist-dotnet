@@ -110,7 +110,7 @@ namespace DSList.Service.Test
         }
 
         [Fact]
-        public async Task FindByList_Invoke_ShouldReturnGameMinDtoList()
+        public async Task FindByListAsync_Invoke_ShouldReturnGameMinDtoList()
         {
             // Arrange
             var gameList = new List<GameMinProjection>();
@@ -138,7 +138,7 @@ namespace DSList.Service.Test
             };
 
             // Act
-            var result = await _service.FindByList(1);
+            var result = await _service.FindByListAsync(1);
 
             // Assert
             result.Should().HaveCount(5);
