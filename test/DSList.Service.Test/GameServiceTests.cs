@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DSList.Data.Entities;
 using DSList.Data.Interfaces;
+using DSList.Data.Projections;
 using DSList.Service.Dtos;
 using DSList.Service.Profiles;
 using DSList.Service.Services;
@@ -106,6 +107,40 @@ namespace DSList.Service.Test
 
             // Assert
             result.Should().BeEquivalentTo(expectedGame, options => options.ComparingByMembers<GameDto>());
+        }
+
+        [Fact]
+        public async Task FindByList_Invoke_ShouldReturnGameMinDtoList()
+        {
+            // Arrange
+            var gameList = new List<GameMinProjection>();
+            for (int i = 1; i <= 5; i++)
+            {
+                gameList.Add(new GameMinProjection
+                {
+                    Id = i,
+                    Title = "Mass Effect Trilogy",
+                    Year = 2012,
+                    ImgUrl = "https://raw.githubusercontent.com/devsuperior/java-spring-dslist/main/resources/1.png",
+                    ShortDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse officiis corrupti unde repellat non quibusdam! Id nihil itaque ipsum!",
+                    Position = i - 1
+                });
+            }
+            _mockRepository.Setup(_ => _.SearchByListAsync(1)).ReturnsAsync(gameList);
+
+            var expectedFirstGame = new GameMinDto
+            {
+                Id = 1,
+                Title = "Mass Effect Trilogy",
+                Year = 2012,
+                ImgUrl = "https://raw.githubusercontent.com/devsuperior/java-spring-dslist/main/resources/1.png",
+                ShortDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse officiis corrupti unde repellat non quibusdam! Id nihil itaque ipsum!"
+            };
+
+            // Act
+            var result = await _service.FindByList(1);
+
+            // Assert
         }
     }
 }
