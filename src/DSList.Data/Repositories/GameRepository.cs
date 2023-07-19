@@ -38,6 +38,7 @@ namespace DSList.Data.Repositories
                     ShortDescription = b.Game.ShortDescription,
                     Position = b.Position
                 })
+                .OrderBy(g => g.Position)
                 .ToListAsync();
         }
     }
