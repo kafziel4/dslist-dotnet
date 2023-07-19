@@ -12,6 +12,7 @@ namespace DSList.Data.Test
     {
         private readonly GameRepository _repository;
         private readonly Game _expectedGame;
+        private readonly GameDbContext _context;
 
         public GameRepositoryTests()
         {
@@ -19,10 +20,10 @@ namespace DSList.Data.Test
             connection.Open();
 
             var optionsBuilder = new DbContextOptionsBuilder<GameDbContext>().UseSqlite(connection);
-            var context = new GameDbContext(optionsBuilder.Options);
-            context.Database.EnsureCreated();
+            _context = new GameDbContext(optionsBuilder.Options);
+            _context.Database.EnsureCreated();
 
-            _repository = new GameRepository(context);
+            _repository = new GameRepository(_context);
 
             _expectedGame = new Game
             {
@@ -81,6 +82,29 @@ namespace DSList.Data.Test
             // Assert
             result.Should().HaveCount(5);
             result.First().Should().BeEquivalentTo(expectedGame, options => options.ComparingByMembers<GameMinProjection>());
+        }
+
+        [Fact]
+        public async Task SearchByListAsync_Invoke_ShouldReturnGamesOrderedByPosition()
+        {
+            // Arrange
+            var gameList = await _context.Belongings
+                .Where(b => b.GameListId == 1)
+                .ToListAsync();
+
+            gameList[0].Position = 1;
+            gameList[1].Position = 0;
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.SearchByListAsync(1);
+
+            // Assert
+            var listResult = result.ToList();
+            for (int i = 0; i < listResult.Count; i++)
+            {
+                listResult[i].Position.Should().Be(i);
+            }
         }
     }
 }
