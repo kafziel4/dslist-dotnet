@@ -10,13 +10,21 @@ namespace DSList.API.Test
 {
     public class GameListControllerTests
     {
+        private readonly Mock<IGameService> _mockGameService;
+        private readonly Mock<IGameListService> _mockGameListService;
+        private readonly GameListController _controller;
+
+        public GameListControllerTests()
+        {
+            _mockGameService = new Mock<IGameService>();
+            _mockGameListService = new Mock<IGameListService>();
+            _controller = new GameListController(_mockGameListService.Object, _mockGameService.Object);
+        }
+
         [Fact]
         public async Task FindAll_GetAction_ShouldReturnStatusOkAndListOfGameListDto()
         {
             // Arrange
-            var mockGameService = new Mock<IGameService>();
-            var mockService = new Mock<IGameListService>();
-
             var listOfGameList = new List<GameListDto>();
             for (int i = 1; i <= 2; i++)
             {
@@ -26,12 +34,10 @@ namespace DSList.API.Test
                     Name = "Aventura e RPG"
                 });
             }
-            mockService.Setup(_ => _.FindAllAsync()).ReturnsAsync(listOfGameList);
-
-            var controller = new GameListController(mockService.Object, mockGameService.Object);
+            _mockGameListService.Setup(_ => _.FindAllAsync()).ReturnsAsync(listOfGameList);
 
             // Act
-            var result = await controller.FindAll();
+            var result = await _controller.FindAll();
 
             // Assert
             var actionResult = result.Should().BeOfType<ActionResult<IEnumerable<GameListDto>>>().Subject;
@@ -45,9 +51,6 @@ namespace DSList.API.Test
         public async Task FindByList_GetAction_ShouldReturnStatusOkAndGameMinDtoList()
         {
             // Arrange
-            var mockGameService = new Mock<IGameService>();
-            var mockGameListService = new Mock<IGameListService>();
-
             var gameMinDtoList = new List<GameMinDto>();
             for (int i = 1; i <= 5; i++)
             {
@@ -60,12 +63,10 @@ namespace DSList.API.Test
                     ShortDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse officiis corrupti unde repellat non quibusdam! Id nihil itaque ipsum!"
                 });
             }
-            mockGameService.Setup(_ => _.FindByListAsync(1)).ReturnsAsync(gameMinDtoList);
-
-            var controller = new GameListController(mockGameListService.Object, mockGameService.Object);
+            _mockGameService.Setup(_ => _.FindByListAsync(1)).ReturnsAsync(gameMinDtoList);
 
             // Act
-            var result = await controller.FindByList(1);
+            var result = await _controller.FindByList(1);
 
             // Assert
             var actionResult = result.Should().BeOfType<ActionResult<IEnumerable<GameMinDto>>>().Subject;
