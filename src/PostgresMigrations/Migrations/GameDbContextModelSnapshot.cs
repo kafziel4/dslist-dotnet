@@ -21,6 +21,86 @@ namespace PostgresMigrations.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("DSList.Data.Entities.Belonging", b =>
+                {
+                    b.Property<long>("GameId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("GameListId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer");
+
+                    b.HasKey("GameId", "GameListId");
+
+                    b.HasIndex("GameListId");
+
+                    b.ToTable("Belongings");
+
+                    b.HasData(
+                        new
+                        {
+                            GameId = 1L,
+                            GameListId = 1L,
+                            Position = 0
+                        },
+                        new
+                        {
+                            GameId = 2L,
+                            GameListId = 1L,
+                            Position = 1
+                        },
+                        new
+                        {
+                            GameId = 3L,
+                            GameListId = 1L,
+                            Position = 2
+                        },
+                        new
+                        {
+                            GameId = 4L,
+                            GameListId = 1L,
+                            Position = 3
+                        },
+                        new
+                        {
+                            GameId = 5L,
+                            GameListId = 1L,
+                            Position = 4
+                        },
+                        new
+                        {
+                            GameId = 6L,
+                            GameListId = 2L,
+                            Position = 0
+                        },
+                        new
+                        {
+                            GameId = 7L,
+                            GameListId = 2L,
+                            Position = 1
+                        },
+                        new
+                        {
+                            GameId = 8L,
+                            GameListId = 2L,
+                            Position = 2
+                        },
+                        new
+                        {
+                            GameId = 9L,
+                            GameListId = 2L,
+                            Position = 3
+                        },
+                        new
+                        {
+                            GameId = 10L,
+                            GameListId = 2L,
+                            Position = 4
+                        });
+                });
+
             modelBuilder.Entity("DSList.Data.Entities.Game", b =>
                 {
                     b.Property<long>("Id")
@@ -219,6 +299,25 @@ namespace PostgresMigrations.Migrations
                             Id = 2L,
                             Name = "Jogos de plataforma"
                         });
+                });
+
+            modelBuilder.Entity("DSList.Data.Entities.Belonging", b =>
+                {
+                    b.HasOne("DSList.Data.Entities.Game", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DSList.Data.Entities.GameList", "GameList")
+                        .WithMany()
+                        .HasForeignKey("GameListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+
+                    b.Navigation("GameList");
                 });
 #pragma warning restore 612, 618
         }
