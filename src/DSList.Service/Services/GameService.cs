@@ -30,7 +30,8 @@ namespace DSList.Service.Services
 
         public async Task<IEnumerable<GameMinDto>> FindByList(long id)
         {
-            return new List<GameMinDto>();
+            var result = await _repository.SearchByListAsync(id);
+            return _mapper.Map<IEnumerable<GameMinDto>>(result);
         }
     }
 }
