@@ -1,5 +1,6 @@
 ﻿using DSList.Data.DbContexts;
 using DSList.Data.Entities;
+using DSList.Data.Projections;
 using DSList.Data.Repositories;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
@@ -63,10 +64,23 @@ namespace DSList.Data.Test
         [Fact]
         public async Task SearchByListAsync_Invoke_ShouldReturnGameMinProjectionList()
         {
+            // Arrange
+            var expectedGame = new GameMinProjection
+            {
+                Id = 1,
+                Title = "Mass Effect Trilogy",
+                Year = 2012,
+                ImgUrl = "https://raw.githubusercontent.com/devsuperior/java-spring-dslist/main/resources/1.png",
+                ShortDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse officiis corrupti unde repellat non quibusdam! Id nihil itaque ipsum!",
+                Position = 0
+            };
+
             // Act
             var result = await _repository.SearchByListAsync(1);
 
             // Assert
+            result.Should().HaveCount(5);
+            result.First().Should().BeEquivalentTo(expectedGame, options => options.ComparingByMembers<GameMinProjection>());
         }
     }
 }
