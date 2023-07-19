@@ -1,4 +1,5 @@
-﻿using DSList.Service.DTOs;
+﻿using DSList.Service.Dtos;
+using DSList.Service.DTOs;
 using DSList.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +23,12 @@ namespace DSList.API.Controllers
         {
             var gameLists = await _gameListService.FindAllAsync();
             return Ok(gameLists);
+        }
+
+        [HttpGet("{id}/games")]
+        public async Task<ActionResult<IEnumerable<GameMinDto>>> FindByList(long id)
+        {
+            return Ok();
         }
     }
 }
