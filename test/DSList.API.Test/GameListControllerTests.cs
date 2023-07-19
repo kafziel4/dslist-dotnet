@@ -68,6 +68,11 @@ namespace DSList.API.Test
             var result = await controller.FindByList(1);
 
             // Assert
+            var actionResult = result.Should().BeOfType<ActionResult<IEnumerable<GameMinDto>>>().Subject;
+            var okObjectResult = actionResult.Result.Should().BeOfType<OkObjectResult>().Subject;
+            var dtos = okObjectResult.Value.Should().BeAssignableTo<IEnumerable<GameMinDto>>().Subject;
+            dtos.Should().HaveCount(5);
+            dtos.First().Should().BeEquivalentTo(gameMinDtoList[0], options => options.ComparingByMembers<GameMinDto>());
         }
     }
 }
