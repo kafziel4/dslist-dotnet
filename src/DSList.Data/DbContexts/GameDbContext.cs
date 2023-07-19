@@ -8,6 +8,7 @@ namespace DSList.Data.DbContexts
     {
         public DbSet<Game> Games { get; set; }
         public DbSet<GameList> GameLists { get; set; }
+        public DbSet<Belonging> Belongings { get; set; }
 
         public GameDbContext(DbContextOptions<GameDbContext> options) : base(options)
         {
@@ -17,6 +18,7 @@ namespace DSList.Data.DbContexts
         {
             modelBuilder.ApplyConfiguration(new GameConfiguration());
             modelBuilder.ApplyConfiguration(new GameListConfiguration());
+            modelBuilder.ApplyConfiguration(new BelongingConfiguration());
             base.OnModelCreating(modelBuilder);
         }
     }
