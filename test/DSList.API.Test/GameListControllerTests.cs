@@ -65,6 +65,7 @@ namespace DSList.API.Test
             var controller = new GameListController(mockGameListService.Object, mockGameService.Object);
 
             // Act
+            var result = await controller.FindByList(1);
 
             // Assert
         }
