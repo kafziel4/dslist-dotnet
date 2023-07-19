@@ -141,6 +141,8 @@ namespace DSList.Service.Test
             var result = await _service.FindByList(1);
 
             // Assert
+            result.Should().HaveCount(5);
+            result.First().Should().BeEquivalentTo(expectedFirstGame, options => options.ComparingByMembers<GameMinDto>());
         }
     }
 }
