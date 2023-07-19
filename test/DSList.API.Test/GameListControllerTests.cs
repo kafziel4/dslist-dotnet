@@ -1,4 +1,5 @@
 ﻿using DSList.API.Controllers;
+using DSList.Service.Dtos;
 using DSList.Service.DTOs;
 using DSList.Service.Interfaces;
 using FluentAssertions;
@@ -9,12 +10,21 @@ namespace DSList.API.Test
 {
     public class GameListControllerTests
     {
+        private readonly Mock<IGameService> _mockGameService;
+        private readonly Mock<IGameListService> _mockGameListService;
+        private readonly GameListController _controller;
+
+        public GameListControllerTests()
+        {
+            _mockGameService = new Mock<IGameService>();
+            _mockGameListService = new Mock<IGameListService>();
+            _controller = new GameListController(_mockGameListService.Object, _mockGameService.Object);
+        }
+
         [Fact]
         public async Task FindAll_GetAction_ShouldReturnStatusOkAndListOfGameListDto()
         {
             // Arrange
-            var mockService = new Mock<IGameListService>();
-
             var listOfGameList = new List<GameListDto>();
             for (int i = 1; i <= 2; i++)
             {
@@ -24,12 +34,10 @@ namespace DSList.API.Test
                     Name = "Aventura e RPG"
                 });
             }
-            mockService.Setup(_ => _.FindAllAsync()).ReturnsAsync(listOfGameList);
-
-            var controller = new GameListController(mockService.Object);
+            _mockGameListService.Setup(_ => _.FindAllAsync()).ReturnsAsync(listOfGameList);
 
             // Act
-            var result = await controller.FindAll();
+            var result = await _controller.FindAll();
 
             // Assert
             var actionResult = result.Should().BeOfType<ActionResult<IEnumerable<GameListDto>>>().Subject;
@@ -37,6 +45,35 @@ namespace DSList.API.Test
             var dtos = okObjectResult.Value.Should().BeAssignableTo<IEnumerable<GameListDto>>().Subject;
             dtos.Should().HaveCount(2);
             dtos.First().Should().BeEquivalentTo(listOfGameList[0], options => options.ComparingByMembers<GameListDto>());
+        }
+
+        [Fact]
+        public async Task FindByList_GetAction_ShouldReturnStatusOkAndGameMinDtoList()
+        {
+            // Arrange
+            var gameMinDtoList = new List<GameMinDto>();
+            for (int i = 1; i <= 5; i++)
+            {
+                gameMinDtoList.Add(new GameMinDto
+                {
+                    Id = i,
+                    Title = "Mass Effect Trilogy",
+                    Year = 2012,
+                    ImgUrl = "https://raw.githubusercontent.com/devsuperior/java-spring-dslist/main/resources/1.png",
+                    ShortDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse officiis corrupti unde repellat non quibusdam! Id nihil itaque ipsum!"
+                });
+            }
+            _mockGameService.Setup(_ => _.FindByListAsync(1)).ReturnsAsync(gameMinDtoList);
+
+            // Act
+            var result = await _controller.FindByList(1);
+
+            // Assert
+            var actionResult = result.Should().BeOfType<ActionResult<IEnumerable<GameMinDto>>>().Subject;
+            var okObjectResult = actionResult.Result.Should().BeOfType<OkObjectResult>().Subject;
+            var dtos = okObjectResult.Value.Should().BeAssignableTo<IEnumerable<GameMinDto>>().Subject;
+            dtos.Should().HaveCount(5);
+            dtos.First().Should().BeEquivalentTo(gameMinDtoList[0], options => options.ComparingByMembers<GameMinDto>());
         }
     }
 }

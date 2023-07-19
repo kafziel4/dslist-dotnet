@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DSList.Data.Entities;
+using DSList.Data.Projections;
 using DSList.Service.Dtos;
 
 namespace DSList.Service.Profiles
@@ -10,6 +11,7 @@ namespace DSList.Service.Profiles
         {
             CreateMap<Game, GameMinDto>();
             CreateMap<Game, GameDto>();
+            CreateMap<GameMinProjection, GameMinDto>();
         }
     }
 }
