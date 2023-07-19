@@ -59,5 +59,14 @@ namespace DSList.Data.Test
             // Assert
             result.Should().BeEquivalentTo(_expectedGame, options => options.ComparingByMembers<Game>());
         }
+
+        [Fact]
+        public async Task SearchByListAsync_Invoke_ShouldReturnGameMinProjectionList()
+        {
+            // Act
+            var result = await _repository.SearchByListAsync(1);
+
+            // Assert
+        }
     }
 }
