@@ -75,5 +75,20 @@ namespace DSList.API.Test
             dtos.Should().HaveCount(5);
             dtos.First().Should().BeEquivalentTo(gameMinDtoList[0], options => options.ComparingByMembers<GameMinDto>());
         }
+
+        [Fact]
+        public async Task Move_PostAction_ShouldReturnOk()
+        {
+            // Arrange
+            var replacementDto = new ReplacementDto
+            {
+                SourceIndex = 1,
+                DestinationIndex = 3
+            };
+
+            // Act
+
+            // Assert
+        }
     }
 }
