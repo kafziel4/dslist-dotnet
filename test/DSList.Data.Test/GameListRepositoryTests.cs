@@ -10,19 +10,25 @@ namespace DSList.Data.Test
 {
     public class GameListRepositoryTests
     {
-        [Fact]
-        public async Task FindAllAsync_Invoke_ShouldReturnListOfGameList()
+        private readonly GameDbContext _context;
+        private readonly GameListRepository _repository;
+
+        public GameListRepositoryTests()
         {
-            // Arrange
             var connection = new SqliteConnection("Data Source=:memory:");
             connection.Open();
 
             var optionsBuilder = new DbContextOptionsBuilder<GameDbContext>().UseSqlite(connection);
-            var context = new GameDbContext(optionsBuilder.Options);
-            context.Database.EnsureCreated();
+            _context = new GameDbContext(optionsBuilder.Options);
+            _context.Database.EnsureCreated();
 
-            var repository = new GameListRepository(context);
+            _repository = new GameListRepository(_context);
+        }
 
+        [Fact]
+        public async Task FindAllAsync_Invoke_ShouldReturnListOfGameList()
+        {
+            // Arrange
             var expectedGameList = new GameList
             {
                 Id = 1,
@@ -30,7 +36,7 @@ namespace DSList.Data.Test
             };
 
             // Act
-            var result = await repository.FindAllAsync();
+            var result = await _repository.FindAllAsync();
 
             // Assert
             result.Should().HaveCount(2);
@@ -41,15 +47,6 @@ namespace DSList.Data.Test
         public async Task SearchBelongingsByListAsync_Invoke_ShouldReturnBelongingsList()
         {
             // Arrange
-            var connection = new SqliteConnection("Data Source=:memory:");
-            connection.Open();
-
-            var optionsBuilder = new DbContextOptionsBuilder<GameDbContext>().UseSqlite(connection);
-            var context = new GameDbContext(optionsBuilder.Options);
-            context.Database.EnsureCreated();
-
-            var repository = new GameListRepository(context);
-
             var expedtedBelonging = new Belonging
             {
                 GameId = 1,
@@ -58,7 +55,7 @@ namespace DSList.Data.Test
             };
 
             // Act
-            var result = await repository.SearchBelongingsByListAsync(1);
+            var result = await _repository.SearchBelongingsByListAsync(1);
 
             // Assert
             result.Should().HaveCount(5);
@@ -69,23 +66,14 @@ namespace DSList.Data.Test
         public async Task SearchBelongingsByListAsync_Invoke_ShouldReturnBelongingsOrderedByPosition()
         {
             // Arrange
-            var connection = new SqliteConnection("Data Source=:memory:");
-            connection.Open();
-
-            var optionsBuilder = new DbContextOptionsBuilder<GameDbContext>().UseSqlite(connection);
-            var context = new GameDbContext(optionsBuilder.Options);
-            context.Database.EnsureCreated();
-
-            var repository = new GameListRepository(context);
-
-            var firstItem = await context.Belongings.FindAsync(1L, 1L);
+            var firstItem = await _context.Belongings.FindAsync(1L, 1L);
             firstItem!.Position = 1;
-            var secondItem = await context.Belongings.FindAsync(2L, 1L);
+            var secondItem = await _context.Belongings.FindAsync(2L, 1L);
             secondItem!.Position = 0;
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             // Act
-            var result = await repository.SearchBelongingsByListAsync(1);
+            var result = await _repository.SearchBelongingsByListAsync(1);
 
             // Assert
             for (int i = 0; i < result.Count; i++)
@@ -100,7 +88,6 @@ namespace DSList.Data.Test
             // Arrange
             var optionsBuilder = new DbContextOptionsBuilder<GameDbContext>();
             var mockContext = new Mock<GameDbContext>(optionsBuilder.Options);
-
             var repository = new GameListRepository(mockContext.Object);
 
             // Act
