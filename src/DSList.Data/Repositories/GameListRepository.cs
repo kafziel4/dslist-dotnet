@@ -21,7 +21,9 @@ namespace DSList.Data.Repositories
 
         public async Task<IList<Belonging>> SearchBelongingsByListAsync(long listId)
         {
-            return new List<Belonging>();
+            return await _context.Belongings
+                .Where(b => b.GameListId == listId)
+                .ToListAsync();
         }
     }
 }
