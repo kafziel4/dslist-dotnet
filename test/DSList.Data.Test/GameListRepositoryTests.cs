@@ -60,6 +60,8 @@ namespace DSList.Data.Test
             var result = await repository.SearchBelongingsByListAsync(1);
 
             // Assert
+            result.Should().HaveCount(5);
+            result[0].Should().BeEquivalentTo(expedtedBelonging, options => options.ComparingByMembers<Belonging>());
         }
     }
 }
