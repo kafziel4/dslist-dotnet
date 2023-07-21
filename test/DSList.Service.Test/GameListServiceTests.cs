@@ -11,18 +11,24 @@ namespace DSList.Service.Test
 {
     public class GameListServiceTests
     {
-        [Fact]
-        public async Task FindAllAsync_Invoke_ShouldReturnListOfGameListDto()
+        private readonly Mock<IGameListRepository> _mockRepository;
+        private readonly GameListService _service;
+
+        public GameListServiceTests()
         {
-            // Arrange
-            var mockRepository = new Mock<IGameListRepository>();
+            _mockRepository = new Mock<IGameListRepository>();
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
                 cfg.AddProfile<GameListProfile>());
             var mapper = new Mapper(mapperConfiguration);
 
-            var service = new GameListService(mockRepository.Object, mapper);
+            _service = new GameListService(_mockRepository.Object, mapper);
+        }
 
+        [Fact]
+        public async Task FindAllAsync_Invoke_ShouldReturnListOfGameListDto()
+        {
+            // Arrange
             var listOfGameList = new List<GameList>();
             for (int i = 1; i <= 2; i++)
             {
@@ -32,7 +38,7 @@ namespace DSList.Service.Test
                     Name = "Aventura e RPG"
                 });
             }
-            mockRepository.Setup(_ => _.FindAllAsync()).ReturnsAsync(listOfGameList);
+            _mockRepository.Setup(_ => _.FindAllAsync()).ReturnsAsync(listOfGameList);
 
             var expectedFirstGameList = new GameListDto
             {
@@ -41,7 +47,7 @@ namespace DSList.Service.Test
             };
 
             // Act          
-            var result = await service.FindAllAsync();
+            var result = await _service.FindAllAsync();
 
             // Assert
             result.Should().HaveCount(2);
@@ -55,28 +61,11 @@ namespace DSList.Service.Test
         public async Task MoveAsync_Invoke_ShouldReplaceGames(
             int sourceIndex, int destinationIndex, long[] expectedGameIds)
         {
-            var mockRepository = new Mock<IGameListRepository>();
-
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-                cfg.AddProfile<GameListProfile>());
-            var mapper = new Mapper(mapperConfiguration);
-
-            var service = new GameListService(mockRepository.Object, mapper);
-
-            var belongings = new List<Belonging>();
-            for (int i = 1; i <= 5; i++)
-            {
-                belongings.Add(new Belonging
-                {
-                    GameId = i,
-                    GameListId = 1,
-                    Position = i - 1
-                });
-            }
-            mockRepository.Setup(_ => _.SearchBelongingsByListAsync(1)).ReturnsAsync(belongings);
+            var belongings = GenerateBelongings();
+            _mockRepository.Setup(_ => _.SearchBelongingsByListAsync(1)).ReturnsAsync(belongings);
 
             // Act          
-            await service.MoveAsync(1, sourceIndex, destinationIndex);
+            await _service.MoveAsync(1, sourceIndex, destinationIndex);
 
             // Assert
             for (int i = 0; i < belongings.Count; i++)
@@ -93,28 +82,11 @@ namespace DSList.Service.Test
             int sourceIndex, int destinationIndex)
         {
             // Arrange
-            var mockRepository = new Mock<IGameListRepository>();
-
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-                cfg.AddProfile<GameListProfile>());
-            var mapper = new Mapper(mapperConfiguration);
-
-            var service = new GameListService(mockRepository.Object, mapper);
-
-            var belongings = new List<Belonging>();
-            for (int i = 1; i <= 5; i++)
-            {
-                belongings.Add(new Belonging
-                {
-                    GameId = i,
-                    GameListId = 1,
-                    Position = i - 1
-                });
-            }
-            mockRepository.Setup(_ => _.SearchBelongingsByListAsync(1)).ReturnsAsync(belongings);
+            var belongings = GenerateBelongings();
+            _mockRepository.Setup(_ => _.SearchBelongingsByListAsync(1)).ReturnsAsync(belongings);
 
             // Act          
-            await service.MoveAsync(1, sourceIndex, destinationIndex);
+            await _service.MoveAsync(1, sourceIndex, destinationIndex);
 
             // Assert
             for (int i = 0; i < belongings.Count; i++)
@@ -127,14 +99,18 @@ namespace DSList.Service.Test
         public async Task MoveAsync_Invoke_ShouldCallSaveChangesAsync()
         {
             // Arrange
-            var mockRepository = new Mock<IGameListRepository>();
+            var belongings = GenerateBelongings();
+            _mockRepository.Setup(_ => _.SearchBelongingsByListAsync(1)).ReturnsAsync(belongings);
 
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-                cfg.AddProfile<GameListProfile>());
-            var mapper = new Mapper(mapperConfiguration);
+            // Act          
+            await _service.MoveAsync(1, 1, 3);
 
-            var service = new GameListService(mockRepository.Object, mapper);
+            // Assert
+            _mockRepository.Verify(m => m.SaveChangesAsync(), Times.Once());
+        }
 
+        private static List<Belonging> GenerateBelongings()
+        {
             var belongings = new List<Belonging>();
             for (int i = 1; i <= 5; i++)
             {
@@ -145,13 +121,8 @@ namespace DSList.Service.Test
                     Position = i - 1
                 });
             }
-            mockRepository.Setup(_ => _.SearchBelongingsByListAsync(1)).ReturnsAsync(belongings);
 
-            // Act          
-            await service.MoveAsync(1, 1, 3);
-
-            // Assert
-            mockRepository.Verify(m => m.SaveChangesAsync(), Times.Once());
+            return belongings;
         }
     }
 }
