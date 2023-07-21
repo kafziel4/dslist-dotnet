@@ -29,8 +29,8 @@ namespace DSList.Service.Services
             list.Remove(item);
             list.Insert(destinationIndex, item);
 
-            var min = sourceIndex;
-            var max = destinationIndex;
+            var min = sourceIndex < destinationIndex ? sourceIndex : destinationIndex;
+            var max = sourceIndex < destinationIndex ? destinationIndex : sourceIndex;
 
             for (int i = min; i <= max; i++)
             {

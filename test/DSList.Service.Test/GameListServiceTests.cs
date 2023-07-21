@@ -118,5 +118,39 @@ namespace DSList.Service.Test
                 belongings[i].Position.Should().Be(i);
             }
         }
+
+        [Fact]
+        public async Task MoveAsync_SourceHigherThanDestination_ShouldUpdateBelongingPosition()
+        {
+            // Arrange
+            var mockRepository = new Mock<IGameListRepository>();
+
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+                cfg.AddProfile<GameListProfile>());
+            var mapper = new Mapper(mapperConfiguration);
+
+            var service = new GameListService(mockRepository.Object, mapper);
+
+            var belongings = new List<Belonging>();
+            for (int i = 1; i <= 5; i++)
+            {
+                belongings.Add(new Belonging
+                {
+                    GameId = i,
+                    GameListId = 1,
+                    Position = i - 1
+                });
+            }
+            mockRepository.Setup(_ => _.SearchBelongingsByListAsync(1)).ReturnsAsync(belongings);
+
+            // Act          
+            await service.MoveAsync(1, 3, 1);
+
+            // Assert
+            for (int i = 0; i < belongings.Count; i++)
+            {
+                belongings[i].Position.Should().Be(i);
+            }
+        }
     }
 }
