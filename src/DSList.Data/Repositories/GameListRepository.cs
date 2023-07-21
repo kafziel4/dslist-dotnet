@@ -18,5 +18,10 @@ namespace DSList.Data.Repositories
         {
             return await _context.GameLists.ToListAsync();
         }
+
+        public async Task<IList<Belonging>> SearchBelongingsByListAsync(long listId)
+        {
+            return new List<Belonging>();
+        }
     }
 }
