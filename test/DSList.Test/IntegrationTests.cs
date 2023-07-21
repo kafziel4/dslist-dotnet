@@ -1,4 +1,5 @@
 ﻿using DSList.Data.DbContexts;
+using DSList.Data.Entities;
 using DSList.Service.Dtos;
 using DSList.Service.DTOs;
 using FluentAssertions;
@@ -133,6 +134,55 @@ namespace DSList.Test
             var gameLists = responseObject.Should().BeAssignableTo<IEnumerable<GameMinDto>>().Subject;
             gameLists.Should().HaveCount(5);
             gameLists.First().Should().BeEquivalentTo(expectedFirstGame, options => options.ComparingByMembers<GameMinDto>());
+        }
+
+        [Fact]
+        public async Task PostListReplacementEndpoint_WhenRequested_ShouldReturnOKAndReplaceGames()
+        {
+            // Arrange
+            List<Belonging> originalBelongings;
+            using (var scope = this.Services.CreateScope())
+            {
+                var scopedServices = scope.ServiceProvider;
+                var context = scopedServices.GetRequiredService<GameDbContext>();
+                originalBelongings = await context.Belongings
+                    .Where(b => b.GameListId == 1)
+                    .OrderBy(b => b.Position)
+                    .ToListAsync();
+            }
+
+            var replacementDto = new ReplacementDto
+            {
+                SourceIndex = 1,
+                DestinationIndex = 3
+            };
+            var jsonContent = JsonContent.Create(replacementDto);
+
+            var expectedOriginalGameIds = new long[] { 1, 2, 3, 4, 5 };
+            var expectedReplacedGameIds = new long[] { 1, 3, 4, 2, 5 };
+
+            // Act
+            var response = await _client.PostAsync("/api/lists/1/replacement", jsonContent);
+            List<Belonging> resultBelongings;
+            using (var scope = this.Services.CreateScope())
+            {
+                var scopedServices = scope.ServiceProvider;
+                var context = scopedServices.GetRequiredService<GameDbContext>();
+                resultBelongings = await context.Belongings
+                    .Where(b => b.GameListId == 1)
+                    .OrderBy(b => b.Position)
+                    .ToListAsync();
+            }
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            for (int i = 0; i < expectedOriginalGameIds.Length; i++)
+            {
+                originalBelongings[i].GameId.Should().Be(expectedOriginalGameIds[i]);
+                originalBelongings[i].Position.Should().Be(i);
+                resultBelongings[i].GameId.Should().Be(expectedReplacedGameIds[i]);
+                resultBelongings[i].Position.Should().Be(i);
+            }
         }
 
         public async Task InitializeAsync()
