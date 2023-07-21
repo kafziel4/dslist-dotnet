@@ -93,5 +93,22 @@ namespace DSList.API.Test
             result.Should().BeAssignableTo<ActionResult>();
             result.Should().BeOfType<OkResult>();
         }
+
+        [Fact]
+        public async Task Move_PostAction_ShouldCallGameListServiceMoveAsync()
+        {
+            // Arrange
+            var replacementDto = new ReplacementDto
+            {
+                SourceIndex = 1,
+                DestinationIndex = 3
+            };
+
+            // Act
+            await _controller.Move(1, replacementDto);
+
+            // Assert
+            _mockGameListService.Verify(m => m.MoveAsync(1, 1, 3), Times.Once());
+        }
     }
 }
