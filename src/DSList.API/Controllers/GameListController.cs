@@ -35,6 +35,7 @@ namespace DSList.API.Controllers
         [HttpPost("{id}/replacement")]
         public async Task<ActionResult> Move(long id, ReplacementDto body)
         {
+            await _gameListService.MoveAsync(id, body.SourceIndex, body.DestinationIndex);
             return Ok();
         }
     }
