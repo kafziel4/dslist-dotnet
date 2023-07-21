@@ -4,6 +4,7 @@ using DSList.Data.Repositories;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 
 namespace DSList.Data.Test
 {
@@ -91,6 +92,21 @@ namespace DSList.Data.Test
             {
                 result[i].Position.Should().Be(i);
             }
+        }
+
+        [Fact]
+        public async Task SaveChangesAsync_Invoke_ShouldSaveChangesToContext()
+        {
+            // Arrange
+            var optionsBuilder = new DbContextOptionsBuilder<GameDbContext>();
+            var mockContext = new Mock<GameDbContext>(optionsBuilder.Options);
+
+            var repository = new GameListRepository(mockContext.Object);
+
+            // Act
+            await repository.SaveChangesAsync();
+
+            // Assert
         }
     }
 }
