@@ -6,5 +6,6 @@ namespace DSList.Data.Interfaces
     {
         Task<IEnumerable<GameList>> FindAllAsync();
         Task<IList<Belonging>> SearchBelongingsByListAsync(long listId);
+        Task SaveChangesAsync();
     }
 }

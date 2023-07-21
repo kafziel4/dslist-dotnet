@@ -26,5 +26,10 @@ namespace DSList.Data.Repositories
                 .OrderBy(b => b.Position)
                 .ToListAsync();
         }
+
+        public Task SaveChangesAsync()
+        {
+            return Task.CompletedTask;
+        }
     }
 }
