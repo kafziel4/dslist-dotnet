@@ -27,9 +27,9 @@ namespace DSList.Data.Repositories
                 .ToListAsync();
         }
 
-        public Task SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return Task.CompletedTask;
+            await _context.SaveChangesAsync();
         }
     }
 }
