@@ -87,8 +87,11 @@ namespace DSList.API.Test
             };
 
             // Act
+            var result = await _controller.Move(1, replacementDto);
 
             // Assert
+            result.Should().BeAssignableTo<ActionResult>();
+            result.Should().BeOfType<OkResult>();
         }
     }
 }
