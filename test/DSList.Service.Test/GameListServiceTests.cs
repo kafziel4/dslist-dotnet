@@ -85,8 +85,12 @@ namespace DSList.Service.Test
             }
         }
 
-        [Fact]
-        public async Task MoveAsync_SourceLowerThanDestination_ShouldUpdateBelongingPosition()
+        [Theory]
+        [InlineData(1, 3)]
+        [InlineData(3, 1)]
+        [InlineData(3, 3)]
+        public async Task MoveAsync_Invoke_ShouldUpdateBelongingPosition(
+            int sourceIndex, int destinationIndex)
         {
             // Arrange
             var mockRepository = new Mock<IGameListRepository>();
@@ -110,41 +114,7 @@ namespace DSList.Service.Test
             mockRepository.Setup(_ => _.SearchBelongingsByListAsync(1)).ReturnsAsync(belongings);
 
             // Act          
-            await service.MoveAsync(1, 1, 3);
-
-            // Assert
-            for (int i = 0; i < belongings.Count; i++)
-            {
-                belongings[i].Position.Should().Be(i);
-            }
-        }
-
-        [Fact]
-        public async Task MoveAsync_SourceHigherThanDestination_ShouldUpdateBelongingPosition()
-        {
-            // Arrange
-            var mockRepository = new Mock<IGameListRepository>();
-
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-                cfg.AddProfile<GameListProfile>());
-            var mapper = new Mapper(mapperConfiguration);
-
-            var service = new GameListService(mockRepository.Object, mapper);
-
-            var belongings = new List<Belonging>();
-            for (int i = 1; i <= 5; i++)
-            {
-                belongings.Add(new Belonging
-                {
-                    GameId = i,
-                    GameListId = 1,
-                    Position = i - 1
-                });
-            }
-            mockRepository.Setup(_ => _.SearchBelongingsByListAsync(1)).ReturnsAsync(belongings);
-
-            // Act          
-            await service.MoveAsync(1, 3, 1);
+            await service.MoveAsync(1, sourceIndex, destinationIndex);
 
             // Assert
             for (int i = 0; i < belongings.Count; i++)
