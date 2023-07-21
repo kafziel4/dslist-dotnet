@@ -23,6 +23,7 @@ namespace DSList.Data.Repositories
         {
             return await _context.Belongings
                 .Where(b => b.GameListId == listId)
+                .OrderBy(b => b.Position)
                 .ToListAsync();
         }
     }
