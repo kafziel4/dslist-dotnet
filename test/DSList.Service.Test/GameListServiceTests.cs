@@ -77,6 +77,10 @@ namespace DSList.Service.Test
             await service.MoveAsync(1, 1, 3);
 
             // Assert
+            for (int i = 0; i < belongings.Count; i++)
+            {
+                belongings[i].GameId.Should().Be(expectedGameIds[i]);
+            }
         }
     }
 }
