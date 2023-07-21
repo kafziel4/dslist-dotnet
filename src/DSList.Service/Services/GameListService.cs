@@ -28,6 +28,14 @@ namespace DSList.Service.Services
             var item = list[sourceIndex];
             list.Remove(item);
             list.Insert(destinationIndex, item);
+
+            var min = sourceIndex;
+            var max = destinationIndex;
+
+            for (int i = min; i <= max; i++)
+            {
+                list[i].Position = i;
+            }
         }
     }
 }
