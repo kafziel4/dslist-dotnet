@@ -48,8 +48,12 @@ namespace DSList.Service.Test
             result.First().Should().BeEquivalentTo(expectedFirstGameList, options => options.ComparingByMembers<GameListDto>());
         }
 
-        [Fact]
-        public async Task MoveAsync_SourceLowerThanDestination_ShouldReplaceGames()
+        [Theory]
+        [InlineData(1, 3, new long[] { 1, 3, 4, 2, 5 })]
+        [InlineData(3, 1, new long[] { 1, 4, 2, 3, 5 })]
+        [InlineData(3, 3, new long[] { 1, 2, 3, 4, 5 })]
+        public async Task MoveAsync_Invoke_ShouldReplaceGames(
+            int sourceIndex, int destinationIndex, long[] expectedGameIds)
         {
             var mockRepository = new Mock<IGameListRepository>();
 
@@ -71,10 +75,8 @@ namespace DSList.Service.Test
             }
             mockRepository.Setup(_ => _.SearchBelongingsByListAsync(1)).ReturnsAsync(belongings);
 
-            var expectedGameIds = new long[] { 1, 3, 4, 2, 5 };
-
             // Act          
-            await service.MoveAsync(1, 1, 3);
+            await service.MoveAsync(1, sourceIndex, destinationIndex);
 
             // Assert
             for (int i = 0; i < belongings.Count; i++)
