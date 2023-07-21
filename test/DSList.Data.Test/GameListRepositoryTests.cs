@@ -107,6 +107,7 @@ namespace DSList.Data.Test
             await repository.SaveChangesAsync();
 
             // Assert
+            mockContext.Verify(m => m.SaveChangesAsync(default), Times.Once());
         }
     }
 }
