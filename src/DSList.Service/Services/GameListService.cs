@@ -36,6 +36,8 @@ namespace DSList.Service.Services
             {
                 list[i].Position = i;
             }
+
+            await _repository.SaveChangesAsync();
         }
     }
 }
