@@ -63,5 +63,34 @@ namespace DSList.Data.Test
             result.Should().HaveCount(5);
             result[0].Should().BeEquivalentTo(expedtedBelonging, options => options.ComparingByMembers<Belonging>());
         }
+
+        [Fact]
+        public async Task SearchBelongingsByListAsync_Invoke_ShouldReturnBelongingsOrderedByPosition()
+        {
+            // Arrange
+            var connection = new SqliteConnection("Data Source=:memory:");
+            connection.Open();
+
+            var optionsBuilder = new DbContextOptionsBuilder<GameDbContext>().UseSqlite(connection);
+            var context = new GameDbContext(optionsBuilder.Options);
+            context.Database.EnsureCreated();
+
+            var repository = new GameListRepository(context);
+
+            var firstItem = await context.Belongings.FindAsync(1L, 1L);
+            firstItem!.Position = 1;
+            var secondItem = await context.Belongings.FindAsync(2L, 1L);
+            secondItem!.Position = 0;
+            await context.SaveChangesAsync();
+
+            // Act
+            var result = await repository.SearchBelongingsByListAsync(1);
+
+            // Assert
+            for (int i = 0; i < result.Count; i++)
+            {
+                result[i].Position.Should().Be(i);
+            }
+        }
     }
 }
