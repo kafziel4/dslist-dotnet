@@ -22,9 +22,12 @@ namespace DSList.Service.Services
             return _mapper.Map<IEnumerable<GameListDto>>(result);
         }
 
-        public Task MoveAsync(long listId, int sourceIndex, int destinationIndex)
+        public async Task MoveAsync(long listId, int sourceIndex, int destinationIndex)
         {
-            return Task.CompletedTask;
+            var list = await _repository.SearchBelongingsByListAsync(listId);
+            var item = list[sourceIndex];
+            list.Remove(item);
+            list.Insert(destinationIndex, item);
         }
     }
 }
