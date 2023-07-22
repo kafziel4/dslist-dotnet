@@ -1,4 +1,5 @@
 ﻿using DSList.Data.DbContexts;
+using DSList.Data.Entities;
 using DSList.Service.Dtos;
 using DSList.Service.DTOs;
 using FluentAssertions;
@@ -133,6 +134,51 @@ namespace DSList.Test
             var gameLists = responseObject.Should().BeAssignableTo<IEnumerable<GameMinDto>>().Subject;
             gameLists.Should().HaveCount(5);
             gameLists.First().Should().BeEquivalentTo(expectedFirstGame, options => options.ComparingByMembers<GameMinDto>());
+        }
+
+        [Fact]
+        public async Task PostListReplacementEndpoint_WhenRequested_ShouldReturnOKAndReplaceGames()
+        {
+            // Arrange
+            var originalBelongings = await GetBelongings();
+
+            var replacementDto = new ReplacementDto
+            {
+                SourceIndex = 1,
+                DestinationIndex = 3
+            };
+            var jsonContent = JsonContent.Create(replacementDto);
+
+            var expectedOriginalGameIds = new long[] { 1, 2, 3, 4, 5 };
+            var expectedReplacedGameIds = new long[] { 1, 3, 4, 2, 5 };
+
+            // Act
+            var response = await _client.PostAsync("/api/lists/1/replacement", jsonContent);
+            var replacedBelongings = await GetBelongings();
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            for (int i = 0; i < expectedOriginalGameIds.Length; i++)
+            {
+                originalBelongings[i].GameId.Should().Be(expectedOriginalGameIds[i]);
+                originalBelongings[i].Position.Should().Be(i);
+                replacedBelongings[i].GameId.Should().Be(expectedReplacedGameIds[i]);
+                replacedBelongings[i].Position.Should().Be(i);
+            }
+        }
+
+        private async Task<List<Belonging>> GetBelongings()
+        {
+            using var scope = this.Services.CreateScope();
+            var scopedServices = scope.ServiceProvider;
+            var context = scopedServices.GetRequiredService<GameDbContext>();
+
+            var belongings = await context.Belongings
+                .Where(b => b.GameListId == 1)
+                .OrderBy(b => b.Position)
+                .ToListAsync();
+
+            return belongings;
         }
 
         public async Task InitializeAsync()

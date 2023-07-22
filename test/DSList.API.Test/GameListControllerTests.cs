@@ -75,5 +75,40 @@ namespace DSList.API.Test
             dtos.Should().HaveCount(5);
             dtos.First().Should().BeEquivalentTo(gameMinDtoList[0], options => options.ComparingByMembers<GameMinDto>());
         }
+
+        [Fact]
+        public async Task Move_PostAction_ShouldReturnOk()
+        {
+            // Arrange
+            var replacementDto = new ReplacementDto
+            {
+                SourceIndex = 1,
+                DestinationIndex = 3
+            };
+
+            // Act
+            var result = await _controller.Move(1, replacementDto);
+
+            // Assert
+            result.Should().BeAssignableTo<ActionResult>();
+            result.Should().BeOfType<OkResult>();
+        }
+
+        [Fact]
+        public async Task Move_PostAction_ShouldCallGameListServiceMoveAsync()
+        {
+            // Arrange
+            var replacementDto = new ReplacementDto
+            {
+                SourceIndex = 1,
+                DestinationIndex = 3
+            };
+
+            // Act
+            await _controller.Move(1, replacementDto);
+
+            // Assert
+            _mockGameListService.Verify(m => m.MoveAsync(1, 1, 3), Times.Once());
+        }
     }
 }
