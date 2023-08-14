@@ -4,21 +4,21 @@ using DSList.Service.DTOs;
 using DSList.Service.Interfaces;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
+using NSubstitute;
 
 namespace DSList.API.Test
 {
     public class GameListControllerTests
     {
-        private readonly Mock<IGameService> _mockGameService;
-        private readonly Mock<IGameListService> _mockGameListService;
+        private readonly IGameService _mockGameService;
+        private readonly IGameListService _mockGameListService;
         private readonly GameListController _controller;
 
         public GameListControllerTests()
         {
-            _mockGameService = new Mock<IGameService>();
-            _mockGameListService = new Mock<IGameListService>();
-            _controller = new GameListController(_mockGameListService.Object, _mockGameService.Object);
+            _mockGameService = Substitute.For<IGameService>();
+            _mockGameListService = Substitute.For<IGameListService>();
+            _controller = new GameListController(_mockGameListService, _mockGameService);
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace DSList.API.Test
                     Name = "Aventura e RPG"
                 });
             }
-            _mockGameListService.Setup(_ => _.FindAllAsync()).ReturnsAsync(listOfGameList);
+            _mockGameListService.FindAllAsync().Returns(listOfGameList);
 
             // Act
             var result = await _controller.FindAll();
@@ -63,7 +63,7 @@ namespace DSList.API.Test
                     ShortDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse officiis corrupti unde repellat non quibusdam! Id nihil itaque ipsum!"
                 });
             }
-            _mockGameService.Setup(_ => _.FindByListAsync(1)).ReturnsAsync(gameMinDtoList);
+            _mockGameService.FindByListAsync(1).Returns(gameMinDtoList);
 
             // Act
             var result = await _controller.FindByList(1);
@@ -108,7 +108,7 @@ namespace DSList.API.Test
             await _controller.Move(1, replacementDto);
 
             // Assert
-            _mockGameListService.Verify(m => m.MoveAsync(1, 1, 3), Times.Once());
+            await _mockGameListService.Received(1).MoveAsync(1, 1, 3);
         }
     }
 }

@@ -6,30 +6,38 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using NSubstitute;
 
 namespace DSList.API.Test
 {
     public class ServiceCollectionTests
     {
+        private readonly ServiceCollection _serviceCollection;
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _mockEnvironment;
+
+        public ServiceCollectionTests()
+        {
+            _serviceCollection = new ServiceCollection();
+            _configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(
+                    new Dictionary<string, string>
+                    { { "ConnectionStrings:GameDBConnectionString", "AnyString" } })
+                .Build();
+            _mockEnvironment = Substitute.For<IWebHostEnvironment>();
+        }
+
         [Theory]
         [InlineData("Development")]
         [InlineData("Production")]
-        public void RegisterDataServices_Invoke_ShouldRegisterGameRepository(string environment)
+        public void RegisterAppServices_Invoke_ShouldRegisterGameRepository(string environment)
         {
             // Arrange
-            var serviceCollection = new ServiceCollection();
-            var configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(
-                    new Dictionary<string, string> {
-                        {"ConnectionStrings:GameDBConnectionString", "AnyString"}})
-                .Build();
-            var mockEnvironment = new Mock<IWebHostEnvironment>();
-            mockEnvironment.Setup(_ => _.EnvironmentName).Returns(environment);
+            _mockEnvironment.EnvironmentName.Returns(environment);
 
             // Act
-            serviceCollection.RegisterDataServices(configuration, mockEnvironment.Object);
-            var serviceProvider = serviceCollection.BuildServiceProvider();
+            _serviceCollection.RegisterAppServices(_configuration, _mockEnvironment);
+            var serviceProvider = _serviceCollection.BuildServiceProvider();
 
             // Assert
             var service = serviceProvider.GetService<IGameRepository>();
@@ -38,39 +46,29 @@ namespace DSList.API.Test
         }
 
         [Fact]
-        public void RegisterBusinessServices_Invoke_ShouldRegisterGameService()
+        public void RegisterAppServices_Invoke_ShouldRegisterGameService()
         {
-            // Arrange
-            var serviceCollection = new ServiceCollection();
-
             // Act
-            serviceCollection.RegisterBusinessServices();
+            _serviceCollection.RegisterAppServices(_configuration, _mockEnvironment);
+            var serviceProvider = _serviceCollection.BuildServiceProvider();
 
             // Assert
-            var isRegisterd = serviceCollection.Any(
-                sd => sd.ServiceType == typeof(IGameService) &&
-                sd.ImplementationType == typeof(GameService));
-            isRegisterd.Should().BeTrue();
+            var service = serviceProvider.GetService<IGameService>();
+            service.Should().NotBeNull();
+            service.Should().BeOfType<GameService>();
         }
 
         [Theory]
         [InlineData("Development")]
         [InlineData("Production")]
-        public void RegisterDataServices_Invoke_ShouldRegisterGameListRepository(string environment)
+        public void RegisterAppServices_Invoke_ShouldRegisterGameListRepository(string environment)
         {
             // Arrange
-            var serviceCollection = new ServiceCollection();
-            var configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(
-                    new Dictionary<string, string> {
-                        {"ConnectionStrings:GameDBConnectionString", "AnyString"}})
-                .Build();
-            var mockEnvironment = new Mock<IWebHostEnvironment>();
-            mockEnvironment.Setup(_ => _.EnvironmentName).Returns(environment);
+            _mockEnvironment.EnvironmentName.Returns(environment);
 
             // Act
-            serviceCollection.RegisterDataServices(configuration, mockEnvironment.Object);
-            var serviceProvider = serviceCollection.BuildServiceProvider();
+            _serviceCollection.RegisterAppServices(_configuration, _mockEnvironment);
+            var serviceProvider = _serviceCollection.BuildServiceProvider();
 
             // Assert
             var service = serviceProvider.GetService<IGameListRepository>();
@@ -79,19 +77,16 @@ namespace DSList.API.Test
         }
 
         [Fact]
-        public void RegisterBusinessServices_Invoke_ShouldRegisterGameListService()
+        public void RegisterAppServices_Invoke_ShouldRegisterGameListService()
         {
-            // Arrange
-            var serviceCollection = new ServiceCollection();
-
             // Act
-            serviceCollection.RegisterBusinessServices();
+            _serviceCollection.RegisterAppServices(_configuration, _mockEnvironment);
+            var serviceProvider = _serviceCollection.BuildServiceProvider();
 
             // Assert
-            var isRegisterd = serviceCollection.Any(
-                sd => sd.ServiceType == typeof(IGameListService) &&
-                sd.ImplementationType == typeof(GameListService));
-            isRegisterd.Should().BeTrue();
+            var service = serviceProvider.GetService<IGameListService>();
+            service.Should().NotBeNull();
+            service.Should().BeOfType<GameListService>();
         }
     }
 }

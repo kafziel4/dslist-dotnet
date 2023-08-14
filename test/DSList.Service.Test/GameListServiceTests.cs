@@ -5,24 +5,24 @@ using DSList.Service.DTOs;
 using DSList.Service.Profiles;
 using DSList.Service.Services;
 using FluentAssertions;
-using Moq;
+using NSubstitute;
 
 namespace DSList.Service.Test
 {
     public class GameListServiceTests
     {
-        private readonly Mock<IGameListRepository> _mockRepository;
+        private readonly IGameListRepository _mockRepository;
         private readonly GameListService _service;
 
         public GameListServiceTests()
         {
-            _mockRepository = new Mock<IGameListRepository>();
+            _mockRepository = Substitute.For<IGameListRepository>();
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
                 cfg.AddProfile<GameListProfile>());
             var mapper = new Mapper(mapperConfiguration);
 
-            _service = new GameListService(_mockRepository.Object, mapper);
+            _service = new GameListService(_mockRepository, mapper);
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace DSList.Service.Test
                     Name = "Aventura e RPG"
                 });
             }
-            _mockRepository.Setup(_ => _.FindAllAsync()).ReturnsAsync(listOfGameList);
+            _mockRepository.FindAllAsync().Returns(listOfGameList);
 
             var expectedFirstGameList = new GameListDto
             {
@@ -62,7 +62,7 @@ namespace DSList.Service.Test
             int sourceIndex, int destinationIndex, long[] expectedGameIds)
         {
             var belongings = GenerateBelongings();
-            _mockRepository.Setup(_ => _.SearchBelongingsByListAsync(1)).ReturnsAsync(belongings);
+            _mockRepository.SearchBelongingsByListAsync(1).Returns(belongings);
 
             // Act          
             await _service.MoveAsync(1, sourceIndex, destinationIndex);
@@ -83,7 +83,7 @@ namespace DSList.Service.Test
         {
             // Arrange
             var belongings = GenerateBelongings();
-            _mockRepository.Setup(_ => _.SearchBelongingsByListAsync(1)).ReturnsAsync(belongings);
+            _mockRepository.SearchBelongingsByListAsync(1).Returns(belongings);
 
             // Act          
             await _service.MoveAsync(1, sourceIndex, destinationIndex);
@@ -100,13 +100,13 @@ namespace DSList.Service.Test
         {
             // Arrange
             var belongings = GenerateBelongings();
-            _mockRepository.Setup(_ => _.SearchBelongingsByListAsync(1)).ReturnsAsync(belongings);
+            _mockRepository.SearchBelongingsByListAsync(1).Returns(belongings);
 
             // Act          
             await _service.MoveAsync(1, 1, 3);
 
             // Assert
-            _mockRepository.Verify(m => m.SaveChangesAsync(), Times.Once());
+            await _mockRepository.Received(1).SaveChangesAsync();
         }
 
         private static List<Belonging> GenerateBelongings()

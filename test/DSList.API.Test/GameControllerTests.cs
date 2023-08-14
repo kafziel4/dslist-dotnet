@@ -3,19 +3,19 @@ using DSList.Service.Dtos;
 using DSList.Service.Interfaces;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
+using NSubstitute;
 
 namespace DSList.API.Test
 {
     public class GameControllerTests
     {
-        private readonly Mock<IGameService> _mockService;
+        private readonly IGameService _mockService;
         private readonly GameController _controller;
 
         public GameControllerTests()
         {
-            _mockService = new Mock<IGameService>();
-            _controller = new GameController(_mockService.Object);
+            _mockService = Substitute.For<IGameService>();
+            _controller = new GameController(_mockService);
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace DSList.API.Test
                 });
             }
 
-            _mockService.Setup(_ => _.FindAllAsync()).ReturnsAsync(gameList);
+            _mockService.FindAllAsync().Returns(gameList);
 
             // Act
             var result = await _controller.FindAll();
@@ -67,7 +67,7 @@ namespace DSList.API.Test
                     "Dignissimos blanditiis quod corporis iste, aliquid perspiciatis architecto quasi tempore ipsam voluptates ea ad distinctio, sapiente qui, amet quidem culpa."
             };
 
-            _mockService.Setup(_ => _.FindByIdAsync(1)).ReturnsAsync(game);
+            _mockService.FindByIdAsync(1).Returns(game);
 
             // Act
             var result = await _controller.FindById(1);

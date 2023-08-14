@@ -6,24 +6,24 @@ using DSList.Service.Dtos;
 using DSList.Service.Profiles;
 using DSList.Service.Services;
 using FluentAssertions;
-using Moq;
+using NSubstitute;
 
 namespace DSList.Service.Test
 {
     public class GameServiceTests
     {
         private readonly GameService _service;
-        private readonly Mock<IGameRepository> _mockRepository;
+        private readonly IGameRepository _mockRepository;
 
         public GameServiceTests()
         {
-            _mockRepository = new Mock<IGameRepository>();
+            _mockRepository = Substitute.For<IGameRepository>();
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
                 cfg.AddProfile<GameProfile>());
             var mapper = new Mapper(mapperConfiguration);
 
-            _service = new GameService(_mockRepository.Object, mapper);
+            _service = new GameService(_mockRepository, mapper);
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace DSList.Service.Test
                         "Dignissimos blanditiis quod corporis iste, aliquid perspiciatis architecto quasi tempore ipsam voluptates ea ad distinctio, sapiente qui, amet quidem culpa."
                 });
             }
-            _mockRepository.Setup(_ => _.FindAllAsync()).ReturnsAsync(gameList);
+            _mockRepository.FindAllAsync().Returns(gameList);
 
             var expectedFirstGame = new GameMinDto
             {
@@ -85,7 +85,7 @@ namespace DSList.Service.Test
                     "Incidunt dolorum, nisi deleniti dicta odit voluptatem nam provident temporibus reprehenderit blanditiis consectetur tenetur. " +
                     "Dignissimos blanditiis quod corporis iste, aliquid perspiciatis architecto quasi tempore ipsam voluptates ea ad distinctio, sapiente qui, amet quidem culpa."
             };
-            _mockRepository.Setup(_ => _.FindByIdAsync(1)).ReturnsAsync(game);
+            _mockRepository.FindByIdAsync(1).Returns(game);
 
             var expectedGame = new GameDto
             {
@@ -126,7 +126,7 @@ namespace DSList.Service.Test
                     Position = i - 1
                 });
             }
-            _mockRepository.Setup(_ => _.SearchByListAsync(1)).ReturnsAsync(gameList);
+            _mockRepository.SearchByListAsync(1).Returns(gameList);
 
             var expectedFirstGame = new GameMinDto
             {

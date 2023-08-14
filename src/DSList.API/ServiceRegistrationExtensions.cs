@@ -9,7 +9,7 @@ namespace DSList.API
 {
     public static class ServiceRegistrationExtensions
     {
-        public static IServiceCollection RegisterDataServices(
+        public static IServiceCollection RegisterAppServices(
             this IServiceCollection services,
             IConfiguration configuration,
             IWebHostEnvironment environment)
@@ -27,13 +27,10 @@ namespace DSList.API
                         optionsBuilder => optionsBuilder.MigrationsAssembly("PostgresMigrations")));
             }
 
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             services.AddScoped<IGameRepository, GameRepository>();
             services.AddScoped<IGameListRepository, GameListRepository>();
-            return services;
-        }
-
-        public static IServiceCollection RegisterBusinessServices(this IServiceCollection services)
-        {
             services.AddScoped<IGameService, GameService>();
             services.AddScoped<IGameListService, GameListService>();
             return services;

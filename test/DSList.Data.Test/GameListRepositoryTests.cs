@@ -4,7 +4,7 @@ using DSList.Data.Repositories;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Moq;
+using NSubstitute;
 
 namespace DSList.Data.Test
 {
@@ -87,14 +87,14 @@ namespace DSList.Data.Test
         {
             // Arrange
             var optionsBuilder = new DbContextOptionsBuilder<GameDbContext>();
-            var mockContext = new Mock<GameDbContext>(optionsBuilder.Options);
-            var repository = new GameListRepository(mockContext.Object);
+            var mockContext = Substitute.For<GameDbContext>(optionsBuilder.Options);
+            var repository = new GameListRepository(mockContext);
 
             // Act
             await repository.SaveChangesAsync();
 
             // Assert
-            mockContext.Verify(m => m.SaveChangesAsync(default), Times.Once());
+            await mockContext.Received(1).SaveChangesAsync(default);
         }
     }
 }

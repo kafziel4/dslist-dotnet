@@ -19,10 +19,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.RegisterBusinessServices();
-builder.Services.RegisterDataServices(builder.Configuration, builder.Environment);
-
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.RegisterAppServices(builder.Configuration, builder.Environment);
 
 var app = builder.Build();
 
